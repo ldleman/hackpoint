@@ -120,6 +120,16 @@ div.CodeMirror{
 	margin:0;
 }
 
+#dropZoneFiles{
+	background: #f8f8f8 none repeat scroll 0 0;
+    border-bottom: 5px solid #f2f2f2;
+    color: #818181;
+    cursor: pointer;
+    font-size: 20px;
+    padding: 15px;
+	text-transform:uppercase;
+    text-align: center;
+}
 
 
 #resource{
@@ -141,6 +151,20 @@ div.CodeMirror{
 	height:100%;
 }
 
+#files tbody a{
+	color:#222222;
+	font-size:20px;
+	line-height:32px;
+	transition: color 0.2s linear;
+}
+#files tbody a:hover{
+	color:#4FC1E9;
+}
+#files tbody a i{
+	color:#cecece;
+	font-size:25px;
+	font-weight:normal;
+}
 
 #parts tbody td{
 	vertical-align:middle;

@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-	if($.hashData('embeded') =="1"){
+	if($.urlParam('embeded') =="1"){
 		$('.navbar,.resources-options,#sketch').hide();
 		$('.container-fluid,.col-md-9,.col-md-3').css('padding','0');
 		$('.list-group-item,#resource').css('padding','3px').css('border-radius','0px');
@@ -9,6 +9,10 @@ $(document).ready(function(){
 		$('#resources').before('<div  style="width:100%;border-radius:0px;" onclick="'+$('#download').attr('onclick')+'" class="btn btn-success" ><i class="fa fa-arrow-circle-o-down"></i> Télécharger</div>');
 		$('.col-md-3,.col-md-9').attr('style','width:20%;float:left;padding:0;');
 		$('.col-md-9').attr('style','width:70%;float:left;padding:0;');
+	}
+	if($.urlParam('sidebar') =="0"){
+		$('#resourceMenu').hide();
+		$('#resourceContent').removeClass('col-md-9').addClass('col-md-12');
 	}
 
 	var init = 'init_'+$.page();
@@ -30,11 +34,15 @@ function init_index(){
 	
 	$('#importJsonSketch').dropzone({
 			url : 'action.php?action=import_sketch',
-			complete : function(useless,server){
+			complete : function(useless){
+			
 				if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-        			search_sketch();
+					search_sketch();
       			}
 			},
+			success: function(file, response){
+                if(response.errors.length>0) alert(response.errors.join(','));
+            },
 			sending : function(file, xhr, formData){
 				formData.append('from','file');
 			}
@@ -188,8 +196,23 @@ function toggle_share_sketch(element){
 
 function toggle_embed_sketch(){
 	$('#embedModal').modal('show');
-	$('#embedModal textarea').val('<a href="'+window.location+'"><small>Voir en taille réelle<small></a><br/><iframe frameborder="0" width="100%" align="center" height="400px" src="'+window.location+'&embeded=1"></iframe>');
+	get_embeded_code();
+	
+}
 
+function get_embeded_code(){
+	var url = window.location.protocol+'//'+window.location.host+window.location.pathname+window.location.search;
+
+	url+= '&embeded=1';
+	if(!$('#enableSideBar').prop('checked'))
+		url+= '&sidebar=0';
+	
+	url+= window.location.hash;
+	
+	var html = '<a href="'+window.location+'"><small>Voir en taille réelle<small></a><br/>';
+	html += '<iframe frameborder="0" width="100%" align="center" height="400px" src="'+url+'"></iframe>';
+	$('#embedModal textarea').val(html);
+	
 	$("#embedModal textarea").focus(function() {
 	    var $this = $(this);
 	    $this.select();
@@ -198,7 +221,6 @@ function toggle_embed_sketch(){
 	        return false;
 	    });
 	});
-
 }
 
 //RESOURCE
@@ -276,19 +298,20 @@ function load_resource(){
 
 		if(r.upload !=null){
 				var data = {};
-				data.url = 'action.php?action=upload_resource';
+				data.url = r.upload.url;
 				data.success = function(useless,r){
 					if(r.errors.length!=0){
 						alert('Erreur : '+r.errors.join(','));
 					}else{
-						$('#resource img:eq(0)').attr('src',r.url);
+						eval(r.upload.callback);
+						
 					}
 				}
 				data.sending = function(file, xhr, formData){
 					formData.append('id', $('#resource').attr('data-id'));
 				}
 				data.createImageThumbnails = false;
-				$('#resource p img:eq(0)').dropzone(data);
+				$(r.upload.element).dropzone(data);
 		}
 
 		if(r.code != null){
@@ -325,6 +348,27 @@ function load_resource(){
 	});
 }
 
+/*FILE*/
+
+function init_file(){
+	search_file();
+};
+
+function search_file(){
+	$('#files').fill({action:'search_file',id:$('#resource').attr('data-id')});
+
+}
+
+function delete_file(element){
+	if(!confirm('Êtes vous sûr de vouloir supprimer ça?')) return;
+	var line = $(element).closest('tr');
+	$.action({action : 'delete_file',resource : $('#resource').attr('data-id'),id : line.attr('data-id')},function(r){
+		line.remove();
+	});
+}
+
+/*PART*/
+
 function init_part(){
 	$('#label').autocomplete({
 		source : 'action.php?action=autocomplete_part',
@@ -342,6 +386,9 @@ function init_part(){
 	};
 	search_part();
 };
+
+
+
 
 function search_part(){
 	$('#parts').fill({action:'search_part',id:$('#resource').attr('data-id')});
@@ -370,6 +417,7 @@ function edit_part(element){
 	});
 }
 */
+
 function delete_part(element){
 	if(!confirm('Êtes vous sûr de vouloir supprimer ça?')) return;
 	var line = $(element).closest('tr');

@@ -48,7 +48,7 @@ date_default_timezone_set(TIME_ZONE);
 set_error_handler('errorToException');
 spl_autoload_register('app_autoloader');
 	
-$_ = array_map('htmlentities',array_merge($_POST,$_GET));
+$_ = array_map('secure_user_vars',array_merge($_POST,$_GET));
 	
 if(isset($_SESSION['currentUser']))
 $myUser =unserialize($_SESSION['currentUser']);	

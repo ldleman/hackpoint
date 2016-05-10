@@ -55,6 +55,101 @@ function getExt($file){
 	return strtolower(array_pop($ext));
 }
 
+function getExtIcon($ext){
+	$icon = '';
+	switch($ext){
+		case '7z':
+		case 'rar':
+		case 'gz':
+		case 'zip':
+			$icon = 'fa-file-archive-o';
+		break;
+		
+		case 'php':
+		case 'js':
+		case 'py':
+		case 'c':
+		case 'cpp':
+		case 'css':
+		case 'h':
+		case 'hpp':
+		case 'html':
+		case 'htm':
+		case 'asp':
+		case 'jsp':
+			$icon = 'fa-file-code-o';
+		break;
+		
+		case 'xls':
+		case 'xlsx':
+		case 'csv':
+			$icon = 'fa-file-excel-o';
+		break;
+		
+		case 'bmp':
+		case 'jpg':
+		case 'jpeg':
+		case 'ico':
+		case 'gif':
+		case 'png':
+		case 'svg':
+			$icon = 'fa-file-image-o';
+		break;
+		
+		case 'pdf':
+			$icon = 'fa-file-pdf-o';
+		break;
+		case 'ppt':
+		case 'pptx':
+			$icon = 'fa-file-powerpoint-o';
+		break;
+		
+		case 'txt':
+		case 'htaccess':
+		case 'md':
+			$icon = 'fa-file-text-o';
+		break;
+		
+		case 'doc':
+		case 'docx':
+		case 'word':
+			$icon = 'fa-file-word-o';
+		break;
+		
+		case 'avi':
+		case 'wmv':
+		case 'mov':
+		case 'divx':
+		case 'xvid':
+		case 'mkv':
+		case 'flv':
+		case 'mpeg':
+		case 'h264':
+		case 'rmvb':
+		case 'mp4':
+			$icon = 'fa-file-movie-o';
+		break;
+		
+		case 'wav':
+		case 'ogg':
+		case 'ogv':
+		case 'ogx':
+		case 'oga':
+		case 'riff':
+		case 'bwf':
+		case 'wma':
+		case 'flac':
+		case 'aac':
+		case 'mp3':
+			$icon = 'fa-file-audio-o';
+		break;
+		default:
+			$icon = 'fa-file-o';
+		break;
+	}
+	return $icon;
+};
+
 function imageResize($image,$w,$h){
 	$resource = imagecreatefromstring(file_get_contents($image));
 	$size = getimagesize($image);

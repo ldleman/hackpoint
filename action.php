@@ -44,7 +44,7 @@ switch ($_['action']){
 		header('location: account.php');
 	break;
 
-
+	
 
 	// SKETCH
 	case 'create_sketch':
@@ -73,34 +73,16 @@ switch ($_['action']){
 		$response = array();
 		try{
 		
-		$sketch = Sketch::getById($_['id']);
-		if(!$sketch->public)throw new Exception('Ce sketch est privé');
-		
-		
-		
-		$response['sketch'] = $sketch->toArray();
-		$response['resources'] = array();
-		
-		foreach(Resource::loadAll(array('sketch'=>$_['id'])) as $resource):
+			$sketch = Sketch::getById($_['id']);
 			
-			$resource = $resource->toArray();
-			if($resource['type']=='image'){
-				$resource['content'] = base64_encode(file_get_contents(SKETCH_PATH.$resource['content']));
-			}else if($resource['type']=='part'){
-				$resource['content'] = array();
-				foreach(ResourcePart::loadAll(array('resource'=>$resource['id'])) as $resourcePart):
-					$part = $resourcePart->part_object;
-					$part = $part->toArray();
-					$resourcePart = $resourcePart->toArray();
-					if($part['image']!='') $part['image'] = base64_encode(file_get_contents(PART_PATH.$part['image']));
-					$resource['content'][] = array('resourcePart'=>$resourcePart,'part'=>$part);
-				
-				endforeach;
-			}else{
-				$resource['content'] = htmlspecialchars(SKETCH_PATH.$resource['content']);
-			}
-			$response['resources'][] = $resource;
-		endforeach;
+			if(!$sketch->public && $myUser->id!=$sketch->owner)throw new Exception('Ce sketch est privé');
+			
+			$response['sketch'] = $sketch->toArray();
+			$response['resources'] = array();
+			
+			foreach(Resource::loadAll(array('sketch'=>$_['id'])) as $resource)
+				$response['resources'][] = Type::toExport($resource);
+
 		
 		}catch(Exception $e){
 			$response['error'] = $e->getMessage();
@@ -119,8 +101,7 @@ switch ($_['action']){
 			header('Pragma: no-cache');
 			header("Content-Disposition: attachment; filename=\"".$filename."\"");
 		}
-		
-		
+
 		echo $response;
 	break;
 	
@@ -163,58 +144,9 @@ switch ($_['action']){
 			
 			
 			
-			foreach($json['resources'] as $res):
-				$resource = new Resource();
-				$resource->fromArray($res);
-				$resource->id = null;
-				$resource->sketch = $sketch->id;
-				$stream = '';
-				
-				if($resource->type=='image'){
-					$stream = base64_decode($resource->content);
-					$resource->content = '';
-				}
-				
-				if($resource->type=='part'){
-					$parts = $resource->content;
-					$resource->content = '';
-				}
-				
-				if(is_string($resource->content)){
-					$resource->content = htmlspecialchars_decode($resource->content);
-				}
-				
-				$resource->save();
-				if($resource->type=='image'){
-					$resource->content = $resource->id.'.png';
-					file_put_contents(SKETCH_PATH.$resource->content,$stream);
-					$resource->save();
-				}else if($resource->type=='part'){
-					
-					foreach($parts as $p):
-						
-						$part = new Part();
-						$part->fromArray($p['part']);
-						$part->id = null;
-						$stream = base64_decode($part->image);
-						$part->owner = $myUser->id;
-						$part->save();
-						$name = $part->id.'.png';
-						file_put_contents(PART_PATH.$name,$stream);
-						$part->image = $name;
-						$part->save();
-						
-						$resourcePart = new ResourcePart();
-						$resourcePart->fromArray($p['resourcePart']);
-						$resourcePart->part = $part->id;
-						$resourcePart->resource = $resource->id;
-						$resourcePart->save();
-						
-					endforeach;
-					$resource->content = '';
-					$resource->save();
-				}
-			endforeach;
+			foreach($json['resources'] as $res)
+				Type::fromImport($res,$sketch);
+
 		});
 	break;
 	case 'search_sketch':
@@ -305,9 +237,32 @@ switch ($_['action']){
 			move_uploaded_file($_FILES['file']['tmp_name'], $path);
 			$resource->content = $name;
 			$resource->save();
+			$response = array_merge(Type::get($resource->type));
 			$response['url'] = $path.'?v='.time();
 		});
 	break;
+	
+	case 'upload_resource_file':
+		Action::write(function($_,&$response){
+			global $myUser;
+			$resource = Resource::getByid($_['id']);
+			$sketch = Sketch::getById($resource->sketch);
+			$ext = getExt($_FILES['file']['name']);
+			if($myUser->id != $sketch->owner) throw new Exception("Seul le propriétaire du sketch peux faire ça");
+			if(!empty(ALLOWED_RESOURCE_FILE) && !in_array($ext,explode(',',ALLOWED_RESOURCE_FILE))) throw new Exception('Extensions autorisées '.ALLOWED_RESOURCE_FILE);
+			if($_FILES['file']['size']>ALLOWED_RESOURCE_SIZE) throw new Exception('Taille maximum autorisée '.ALLOWED_RESOURCE_SIZE.' o');
+			$name = $resource->id;
+			$folder = SKETCH_PATH.$name;	
+			if(!file_exists($folder)) mkdir($folder);
+			
+			$path = $folder.'/'.$_FILES['file']['name'];
+			
+			move_uploaded_file($_FILES['file']['tmp_name'], $path);
+			$response = array_merge(Type::get($resource->type));
+			$response['url'] = $path.'?v='.time();
+		});
+	break;
+	
 	case 'search_resources':
 	    
 		
@@ -336,38 +291,7 @@ switch ($_['action']){
 		foreach($types as $uid=>$tp)
 			if(isset($tp['extension']) && $ext == $tp['extension']) $type = $uid;
 		
-		
-		$resource = new Resource();
-		$resource->sketch = $sketch->id;
-		$stream = file_get_contents($_FILES['file']['tmp_name']);
-		$resource->label = $_FILES['file']['name'];
-		$resource->type = $type;
-		switch($type){
-			case 'arduino':
-			case 'php':
-			case 'python':
-			case 'c':
-			case 'java':
-			case 'readme':
-				$resource->content = file_get_contents($_FILES['file']['tmp_name']);
-				$enc = mb_detect_encoding($resource->content,"UTF-8, ISO-8859-1, GBK");
-				if($enc!='UTF-8')
-					$resource->content = iconv($enc,"utf-8",$resource->content); 
-				
-				
-				$resource->save();
-			break;
-			case 'image':
-				
-				$resource->save();
-				$name = $resource->id.'.'.$ext;
-				file_put_contents(SKETCH_PATH.$name,$stream);
-				$resource->content = $name;
-				$resource->save();
-			break;
-			default:
-			break;
-		}
+		Type::fromFileImport($_FILES['file'],$sketch,$type);
 		
 	break;
 	
@@ -377,11 +301,12 @@ switch ($_['action']){
 		global $myUser;
 		$ext = explode('.',$_FILES['file']['name']);
 		$ext = strtolower(array_pop($ext));
-		if(!in_array($ext,array('jpg','png','jpeg','gif'))) exit();
+		if(!in_array($ext,explode(',',ALLOWED_RESOURCE_IMAGE))) exit();
 		imageResize($_FILES['file']['tmp_name'],100,100);
 		echo 'data:image/png;base64,'.base64_encode(file_get_contents($_FILES['file']['tmp_name']));
-		
 	break;
+	
+	
 	
 	case 'search_component':
 		Action::write(function($_,&$response){
@@ -474,70 +399,57 @@ switch ($_['action']){
 			$resource->save();
 		});
 	break;
+	
+	case 'get_resource_file':
+		global $myUser;
+		$resource = Resource::getById($_['id']);
+		$sketch =$resource->sketch_object;
+		if($myUser->id != $sketch->owner && !$sketch->public){
+			echo 'Désolé, vous n\'avez pas d\'accès à cette ressource...';
+			return;
+		}
+		$filepath = SKETCH_PATH.$resource->id.'/'.$_['file'];
+		$finfo = finfo_open(FILEINFO_MIME_TYPE); 
+		
+		$mime = finfo_file($finfo, $filepath);
+		
+		header('Content-Type: '.$mime);
+		header("Content-Length: " . filesize($filepath));
+		header('Expires: Sun, 01 Jan 2014 00:00:00 GMT');
+		header('Cache-Control: no-store, no-cache, must-revalidate');
+		header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+		header('Cache-Control: post-check=0, pre-check=0', FALSE);
+		header('Pragma: no-cache');
+		header("Content-Disposition: attachment; filename=\"".basename($filepath)."\"");
+		
+		echo file_get_contents($filepath);
+		finfo_close($finfo);
+	break;
+	
+	case 'get_resource_image':
+		global $myUser;
+		
+		$resource = Resource::getById($_['id']);
+		$sketch =$resource->sketch_object;
+		if($myUser->id != $sketch->owner && !$sketch->public){
+			readfile('img/default_image.png');
+			return;
+		}
+		$finfo = finfo_open(FILEINFO_MIME_TYPE);
+		$filepath = SKETCH_PATH.$resource->content;
+		$mime = finfo_file($finfo, $filepath);
+		header('Content-Type: '.$mime);
+		readfile($filepath);
+	break;
+	
 	case 'edit_resource':
 		Action::write(function($_,&$response){
 		
 			$resource = Resource::getById($_['id']);
 			global $myUser;
 			$sketch = Sketch::getById($resource->sketch);
-			 
 			$resource->label = html_entity_decode($resource->label);
-			$response = $resource->toArray();
-			$type = Type::get($resource->type);
-			
-			switch($resource->type){
-				
-				case 'image':
-					
-					if($myUser->id == $sketch->owner){
-						$image = $response['content']==''?'img/default_image.png':SKETCH_PATH.$response['content'].'?v='.time();
-						$response['content'] = '<img style="width:100%;height:auto;" class="dropzone" src="'.$image.'" />';
-						$response['upload'] = $type['upload'];
-					}
-				break;
-				case 'part':
-					$response['callback'] = 'init_part();';
-					$response['content'] = '<table class="table table-stripped table-bordered" id="parts"><thead>
-						<tr>
-							<th>Libellé</th>
-							<!--<th>Lien</th>
-							<th>Prix</th>-->';
-					if($myUser->id == $sketch->owner)
-							$response['content'] .= '<th></th>';
-							
-					$response['content'] .= '</tr>';
-						
-					if($myUser->id == $sketch->owner){
-						$response['content'] .= '<tr id="partForm" data-action="save_part" data-id="">
-							<td><input type="text" id="label" class="form-control"></td>
-							<!--<td><input type="url" id="link"  class="form-control"></td>
-							<td><input type="text" id="price"  class="form-control input-mini"></td>-->
-							<td><div class="btn btn-success" onclick="save_part();"><i class="fa fa-plus"></i></div></td>
-						</tr>';
-					}
-						
-					$response['content'] .= '</thead><tbody>';
-					
-					$response['content'] .= '<tr style="display:none" data-id="{{id}}">
-							<td ><a href="{{link}}"><div class="componentImage"><img src="{{image}}"/></div> {{label}}</a> {{#price}}<code>{{price}} €</code>{{/price}}{{#brand}} <small>{{brand}}</small>{{/brand}}</td>';
-					
-					if($myUser->id == $sketch->owner)
-						$response['content'] .= '<td><div class="btn btn-danger" onclick="delete_part(this);"><i class="fa fa-times" ></i></div></td>';
-					
-					$response['content'] .= '</tr>';
-					$response['content'] .='</tbody></table>';
-				break;
-			}
-			
-			
-			
-			//for sources
-			if(isset($type['codemirror'])){
-				$response['content'] = '<textarea>'.$response['content'].'</textarea>';
-				$response['code'] = $type['codemirror'];
-				if($myUser->id != $sketch->owner) $response['code']['readOnly'] = true;
-			}
-
+			$response = Type::toHtml($resource,$sketch);
 		});
 	break;
 	case 'delete_resource':
@@ -548,6 +460,76 @@ switch ($_['action']){
 			if($myUser->id != $sketch->owner) throw new Exception("Permission refusée, seul l'auteur du sketch peux faire ça");
 			Resource::getById($_['id']);
 			$resource->remove();
+		});
+	break;
+	
+	/*FILES*/
+	case 'search_file':
+	
+	Action::write(function($_,&$response){
+			global $myUser;
+			if(!isset($_['id']) || !is_numeric($_['id'])) throw new Exception("Ressource non spécifiée");
+			
+			$resource = Resource::getById($_['id']);
+			$sketch = $resource->sketch_object;
+			
+			if($myUser->id != $sketch->owner && !$sketch->public) throw new Exception("Désolé, le sketch est privé");
+			
+			foreach(glob(SKETCH_PATH.'/'.$_['id'].'/*') as $file):
+				$icon = getExtIcon(getExt($file));
+				
+				$response['rows'][] = array('id'=>basename($file),'icon'=>$icon,'label'=>basename($file),'resource'=>$resource->id);
+			endforeach;
+		});
+	break;
+	
+	case 'download_file':
+			
+			global $myUser;
+			$path = SKETCH_PATH.'/'.$_['resource'];
+			
+			
+			$resource = Resource::getById($_['resource']);
+			$sketch = $resource->sketch_object;
+			if($myUser->id != $sketch->owner && !$sketch->public) throw new Exception("Permission refusée, le sketch est privé");
+			
+		
+			
+			$filename = $resource->label.'-'.time().'.zip';
+			$filepath = sys_get_temp_dir().DIRECTORY_SEPARATOR.$filename;
+			$zip = new ZipArchive;
+			if(file_exists($filepath))unlink($filepath); 
+			$res = $zip->open($filepath, ZipArchive::CREATE);
+			if ($res === TRUE) {
+				foreach(glob($path.'/*') as $file)
+					$zip->addFile($file,basename($file));
+				
+				
+				$zip->close();
+			}
+		
+			header("Content-Type: application/zip");
+			header("Content-Length: " . filesize($filepath));
+			header('Expires: Sun, 01 Jan 2014 00:00:00 GMT');
+			header('Cache-Control: no-store, no-cache, must-revalidate');
+			header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+			header('Cache-Control: post-check=0, pre-check=0', FALSE);
+			header('Pragma: no-cache');
+			header("Content-Disposition: attachment; filename=\"".$filename."\"");
+			readfile($filepath);
+			unlink($filepath); 
+
+		
+	break;
+	
+	case 'delete_file':
+		Action::write(function($_,&$response){
+			global $myUser;
+			$path = SKETCH_PATH.'/'.$_['resource'].'/'.$_['id'];
+			$resource = Resource::getById($_['resource']);
+			$sketch = $resource->sketch_object;
+			if($myUser->id != $sketch->owner) throw new Exception("Permission refusée, seul l'auteur du sketch peux faire ça");
+			if(file_exists($path)) unlink($path);
 		});
 	break;
 	

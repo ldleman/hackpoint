@@ -10,7 +10,7 @@ if(!$sketch->public && $myUser->id != $sketch->owner) throw new Exception("Sketc
 <div class="row" id="sketch" data-id="<?php echo $sketch->id; ?>">
 	<div class="col-md-4">
 	
-		<h5 id="sketchTitle"><input onblur="save_sketch_title(this);" type="text" value="<?php echo htmlentities(html_entity_decode($sketch->label)); ?>"/></h5>
+		<h5 id="sketchTitle"><input onblur="save_sketch_title(this);" type="text" value="<?php echo htmlspecialchars(html_entity_decode($sketch->label)); ?>"/></h5>
 	</div>
 	<div class="col-md-8">
 		<ul class="sketchOptions">
@@ -24,7 +24,7 @@ if(!$sketch->public && $myUser->id != $sketch->owner) throw new Exception("Sketc
 </div>
 <div class="row">
 	
-	<div class="col-md-3">
+	<div class="col-md-3" id="resourceMenu">
 
 		<?php if($myUser->id == $sketch->owner) : ?>
 			   <div class="btn-group" style="margin:10px auto;">
@@ -53,7 +53,7 @@ if(!$sketch->public && $myUser->id != $sketch->owner) throw new Exception("Sketc
 					 
 		</div>
 	</div>
-	<div class="col-md-9">
+	<div class="col-md-9" id="resourceContent">
 		<div class="jumbotron">
 			<div class="jumbotron-contents" id="resource">
 				<h2 style="margin:0 0 5px 0;">Aucune ressource sélectionnée</h2>
@@ -109,6 +109,9 @@ if(!$sketch->public && $myUser->id != $sketch->owner) throw new Exception("Sketc
         <h4 class="modal-title">Copier coller le code suivant</h4>
       </div>
       <div class="modal-body">
+	  
+	  <label><input id="enableSideBar" checked="checked" onchange="get_embeded_code();" type="checkbox"> Afficher la barre de menu</label>
+	  <br/>
       <label for="code">Code</label>
       <textarea class="form-control"></textarea>
       </div>
