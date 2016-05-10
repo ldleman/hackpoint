@@ -249,7 +249,7 @@ switch ($_['action']){
 			$sketch = Sketch::getById($resource->sketch);
 			$ext = getExt($_FILES['file']['name']);
 			if($myUser->id != $sketch->owner) throw new Exception("Seul le propriétaire du sketch peux faire ça");
-			if(!empty(ALLOWED_RESOURCE_FILE) && !in_array($ext,explode(',',ALLOWED_RESOURCE_FILE))) throw new Exception('Extensions autorisées '.ALLOWED_RESOURCE_FILE);
+			if(ALLOWED_RESOURCE_FILE!='' && !in_array($ext,explode(',',ALLOWED_RESOURCE_FILE))) throw new Exception('Extensions autorisées '.ALLOWED_RESOURCE_FILE);
 			if($_FILES['file']['size']>ALLOWED_RESOURCE_SIZE) throw new Exception('Taille maximum autorisée '.ALLOWED_RESOURCE_SIZE.' o');
 			$name = $resource->id;
 			$folder = SKETCH_PATH.$name;	
