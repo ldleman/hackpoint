@@ -38,6 +38,26 @@ class Type{
 				'readOnly' =>  false
 			)
 		);
+		$types['clike'] = array(
+			'label' => 'Source C++/C',
+			'extension' => 'cpp',
+			'codemirror' => array(
+				'mode'=>'clike',
+				'theme'=>'monokai',
+				'lineNumbers' => true,
+				'readOnly' =>  false
+			)
+		);
+		$types['shell'] = array(
+			'label' => 'Shell',
+			'extension' => 'sh',
+			'codemirror' => array(
+				'mode'=>'shell',
+				'theme'=>'monokai',
+				'lineNumbers' => true,
+				'readOnly' =>  false
+			)
+		);
 
 		$types['php'] = array(
 			'label' => 'Source PHP',
@@ -63,7 +83,7 @@ class Type{
 
 		$types['c'] = array(
 			'label' => 'Source C++',
-			'extension' => '.cpp',
+			'extension' => 'cpp',
 			'codemirror' => array(
 				'mode'=>'clike',
 				'theme'=>'monokai',
@@ -74,9 +94,30 @@ class Type{
 
 		$types['java'] = array(
 			'label' => 'Source JAVA',
-			'extension' => '.java',
+			'extension' => 'java',
 			'codemirror' => array(
 				'mode'=>'java',
+				'theme'=>'monokai',
+				'lineNumbers' => true,
+				'readOnly' =>  false
+			)
+		);
+
+		$types['css'] = array(
+			'label' => 'Feuille CSS',
+			'extension' => 'css',
+			'codemirror' => array(
+				'mode'=>'css',
+				'theme'=>'monokai',
+				'lineNumbers' => true,
+				'readOnly' =>  false
+			)
+		);
+		$types['javascript'] = array(
+			'label' => 'Source Javascript',
+			'extension' => 'js',
+			'codemirror' => array(
+				'mode'=>'javascript',
 				'theme'=>'monokai',
 				'lineNumbers' => true,
 				'readOnly' =>  false
@@ -120,8 +161,11 @@ class Type{
 		switch($resource->type){
 			case 'arduino':
 			case 'php':
+			case 'shell':
 			case 'python':
 			case 'c':
+			case 'css':
+			case 'javascript':
 			case 'java':
 			case 'readme':
 				$resource->content = file_get_contents($file['tmp_name']);
