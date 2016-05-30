@@ -1,6 +1,6 @@
 <?php require_once __DIR__.DIRECTORY_SEPARATOR.'header.php'; ?>
 
-	<?php if($myUser->connected()): ?>
+	<?php if ($myUser->connected()): ?>
 
 			<div class="jumbotron">
 			<div class="jumbotron-contents">
@@ -76,9 +76,9 @@
 	</div>
 			
 	<?php
-	 else: 
-		header('index.php');
-	 endif; ?>
+     else:
+        header('index.php');
+     endif; ?>
 
 <?php 
 

@@ -36,7 +36,7 @@ require_once __DIR__.DIRECTORY_SEPARATOR.'common.php';
                     </div>
                     <!-- Collect the nav links, forms, and other content for toggling -->
                     
-					<?php if($myUser->connected()): ?>
+					<?php if ($myUser->connected()): ?>
 					<div id="bs-example-navbar-collapse-5" class="collapse navbar-collapse">
                       <ul class="nav navbar-nav">
                         <li <?php echo $page=='index.php'?'class="active"':''; ?>><a href="index.php">Sketch</a></li>
@@ -89,13 +89,13 @@ require_once __DIR__.DIRECTORY_SEPARATOR.'common.php';
 		
 		
 		<!-- messages -->
-			<?php if(isset($_SESSION['error'])): ?>
+			<?php if (isset($_SESSION['error'])): ?>
 			<div class="alert alert-danger">
               <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
               <strong>Oops!</strong> <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
             </div>
 			<?php endif; ?>
-			<?php if(isset($_SESSION['success'])): ?>
+			<?php if (isset($_SESSION['success'])): ?>
 			<div class="alert alert-success alert-dismissable">
               <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
               <strong>Succès !</strong> <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>

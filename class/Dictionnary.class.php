@@ -1,42 +1,50 @@
 <?php
 /**
-* Manage application and plugins lists with key/value pair
+* Manage application and plugins lists with key/value pair.
 * 
 * @author valentin carruesco
+*
 * @category Core
+*
 * @license copyright
 */
+class Dictionnary extends Entity
+{
+    public $id,$slug,$label,$parent,$state;
+    protected $fields =
+    array(
+        'id' => 'key',
+        'slug' => 'string',
+        'label' => 'longstring',
+        'parent' => 'int',
+        'state' => 'int',
+    );
 
-class Dictionnary extends Entity {
-	public $id,$slug,$label,$parent,$state;
-	protected $fields = 
-	array(
-		'id'=>'key',
-		'slug'=>'string',
-		'label'=>'longstring',
-		'parent'=>'int',
-		'state'=>'int'
-	);
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
-	function __construct(){
-		parent::__construct();
-	}
+    public static function childs($slug, $sort = 'label ASC')
+    {
+        $obj = new self();
+        $childs = array();
+        $parent = $obj->load(array('slug' => $slug));
+        if (!$parent) {
+            return $childs;
+        }
+        foreach ($obj->loadAll(array('parent' => $parent->id), $sort) as $child) {
+            $childs[$child->id] = $child;
+        }
 
-	public static function childs($slug,$sort='label ASC'){
-		$obj = new self();
-		$childs = array();
-		$parent = $obj->load(array('slug'=>$slug));
-		if(!$parent) return $childs;
-		foreach($obj->loadAll(array('parent'=>$parent->id),$sort) as $child)
-			$childs[$child->id] = $child;
-		
-		return $childs;
-	}
+        return $childs;
+    }
 
-	public static function table($slug){
-		$obj = new self();
-		$parent = $obj->load(array('slug'=>$slug));
-		echo '<div class="table_list_'.$slug.'" data-list="'.$parent->id.'">
+    public static function table($slug)
+    {
+        $obj = new self();
+        $parent = $obj->load(array('slug' => $slug));
+        echo '<div class="table_list_'.$slug.'" data-list="'.$parent->id.'">
 					<label for="config_application_table"></label>
 					<table id="" class="table table-striped table-bordered table-hover">
 						<thead>
@@ -59,8 +67,5 @@ class Dictionnary extends Entity {
 						</tr>
 					</tbody></table>
 				</div>';
-	}
-
+    }
 }
-
-?>
