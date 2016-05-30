@@ -21,7 +21,7 @@
 						<tr data-id="{{id}}" style="display:none;">
 							<td>{{id}}</td>
 							<td><div class="componentImage"><img src="{{image}}"/></div></td>
-							<td>{{label}}</td>
+							<td>{{label}}<br/><small class="text-muted"><a href="{{link}}" target="_blank">{{link}}</a></small></td>
 							<td>{{brand}}</td>
 							<td>{{price}}</td>
 							<td>
@@ -45,15 +45,26 @@
 	        <h4 class="modal-title">Edition composant</h4>
 	      </div>
 	      <div class="modal-body">
-	      	<label for="label">Libellé</label>
-	        <input class="form-control" type="text" id="label"/>
-	        <label for="label">Marque</label>
-	        <input class="form-control" type="text" id="brand"/>
-	        <label for="label">Prix</label>
-	        <input class="form-control" type="text" id="price"/>
-			<label for="imageUpload">Image (fichier)</label><br/>
-			<img src="img/default_image.png" style="width:100px;height:100px;" id="imageUpload"/>
-			
+                <div class="form-group">
+	          <label for="label">Libellé</label>
+	          <input class="form-control" type="text" id="label"/>
+	        </div>
+                <div class="form-group">
+	          <label for="label">Marque</label>
+	          <input class="form-control" type="text" id="brand"/>
+	        </div>
+                <div class="form-group">
+	          <label for="label">Lien</label>
+	          <input class="form-control" type="text" id="link"/>
+	        </div>
+                <div class="form-group">
+	          <label for="label">Prix</label>
+	          <input class="form-control" type="text" id="price"/>
+	        </div>
+                <div class="form-group">
+	          <label for="imageUpload">Image (fichier)</label><br/>
+	          <img src="img/default_image.png" style="width:100px;height:100px;" id="imageUpload"/>
+	        </div>
 	      </div>
 	      <div class="modal-footer">
 	      	<button type="button" class="btn btn-primary" onclick="save_component();" data-dismiss="modal">Enregistrer</button>
