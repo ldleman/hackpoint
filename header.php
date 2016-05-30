@@ -55,8 +55,10 @@ require_once __DIR__.DIRECTORY_SEPARATOR.'common.php';
                           </ul>
                         </li>
                         -->
+                      </ul>
+                      <ul class="nav navbar-nav navbar-right">
                         <li class="dropdown <?php echo $page=='account.php'?'active':''; ?>" >
-                          <a data-toggle="dropdown" class="dropdown-toggle" href="#"> Connecté avec <?php echo $myUser->login; ?> <b class="caret"></b></a>
+                          <a data-toggle="dropdown" class="dropdown-toggle" href="#"> Connecté en tant que <?php echo $myUser->login; ?> <b class="caret"></b></a>
                           <ul role="menu" class="dropdown-menu">
                             <li class="dropdown-header">Profil</li>
                             <li ><a href="account.php">Modifier</a></li>
