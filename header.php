@@ -17,6 +17,7 @@ require_once __DIR__.DIRECTORY_SEPARATOR.'common.php';
       <link rel="stylesheet" href="css/main.css">
     </head>
     <body>
+        <div id="wrap">
     
 
 
