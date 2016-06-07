@@ -1,6 +1,8 @@
 <?php require_once __DIR__.DIRECTORY_SEPARATOR.'header.php'; ?>
 
-	<?php if(!$myUser->connected()) header('location: index.php'); ?>
+	<?php if (!$myUser->connected()) {
+    header('location: index.php');
+} ?>
 
 		<div class="jumbotron">
 			<div class="jumbotron-contents">

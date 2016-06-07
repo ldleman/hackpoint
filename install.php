@@ -40,32 +40,35 @@
 		
 
 <?php
-try{
-mb_internal_encoding('UTF-8');
-require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'constant.php');
-require_once(__ROOT__.'function.php');
-date_default_timezone_set(TIME_ZONE); 
-set_error_handler('errorToException');
-spl_autoload_register('app_autoloader');
-	
-$_ = array_map('secure_user_vars',array_merge($_POST,$_GET));
-	
-if(isset($_SESSION['currentUser']))
-$myUser =unserialize($_SESSION['currentUser']);	
+try {
+    mb_internal_encoding('UTF-8');
+    require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'constant.php');
+    require_once(__ROOT__.'function.php');
+    date_default_timezone_set(TIME_ZONE);
+    set_error_handler('errorToException');
+    spl_autoload_register('app_autoloader');
+    
+    $_ = array_map('secure_user_vars', array_merge($_POST, $_GET));
+    
+    if (isset($_SESSION['currentUser'])) {
+        $myUser =unserialize($_SESSION['currentUser']);
+    }
 
 
-if(file_exists(__ROOT__.DATABASE_PATH) && filesize(__ROOT__.DATABASE_PATH)>0) throw new Exception('Base déjà installée, pour réinstaller la base, supprimez le fichier '.DATABASE_PATH.', puis rechargez cette page.');
+    if (file_exists(__ROOT__.DATABASE_PATH) && filesize(__ROOT__.DATABASE_PATH)>0) {
+        throw new Exception('Base déjà installée, pour réinstaller la base, supprimez le fichier '.DATABASE_PATH.', puis rechargez cette page.');
+    }
 
 
 //Class entities
 Entity::install(__ROOT__.'class');
 
-$admin = new User();
-$admin->login = 'admin';
-$admin->password = User::password_encrypt('admin');
-$admin->rank = 'ADMIN';
-$admin->save();
-?>
+    $admin = new User();
+    $admin->login = 'admin';
+    $admin->password = User::password_encrypt('admin');
+    $admin->rank = 'ADMIN';
+    $admin->save();
+    ?>
 
 <div class="alert alert-success alert-dismissable">
 	<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
@@ -73,14 +76,16 @@ $admin->save();
 </div>
 <?php
 
-}catch(Exception $e){
-?>
+} catch (Exception $e) {
+    ?>
 
 <div class="alert alert-danger">
 	<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-	<strong>Oops!</strong> <?php echo $e->getMessage(); ?> 
+	<strong>Oops!</strong> <?php echo $e->getMessage();
+    ?> 
 </div>
-<?php } ?>
+<?php 
+} ?>
 <a class="btn btn-primary" href="index.php">Revenir à l'index</a>
  </div>
 		<!-- body -->
