@@ -54,14 +54,18 @@ try {
         $myUser =unserialize($_SESSION['currentUser']);
     }
 
-
-    if (file_exists(__ROOT__.DATABASE_PATH) && filesize(__ROOT__.DATABASE_PATH)>0) {
-        throw new Exception('Base déjà installée, pour réinstaller la base, supprimez le fichier '.DATABASE_PATH.', puis rechargez cette page.');
-    }
-
-
-//Class entities
-Entity::install(__ROOT__.'class');
+	
+	if(!is_writable (__ROOT__.UPLOAD_PATH)) throw new Exception('Le dossier '.__ROOT__.UPLOAD_PATH.' doit être accessible en ecriture, merci de taper la commande linux <code>sudo chown -R www-data:www-data '.__ROOT__.UPLOAD_PATH.'</code> ou de régler le dossier en écriture via votre client ftp');
+	if(!is_writable (dirname(__ROOT__.DATABASE_PATH))) throw new Exception('Le dossier '.dirname(__ROOT__.DATABASE_PATH).' doit être accessible en ecriture, merci de taper la commande linux <code>sudo chown -R www-data:www-data '.dirname(__ROOT__.DATABASE_PATH).'</code> ou de régler le dossier en écriture via votre client ftp');
+	if(!file_exists(__ROOT__.SKETCH_PATH)) mkdir(__ROOT__.SKETCH_PATH);
+	
+    if (file_exists(__ROOT__.DATABASE_PATH) && filesize(__ROOT__.DATABASE_PATH)>0) throw new Exception('Base déjà installée, pour réinstaller la base, supprimez le fichier '.DATABASE_PATH.', puis rechargez cette page.');
+	if(!extension_loaded('gd') || !function_exists('gd_info'))  throw new Exception('L\'extension php GD2  est requise, veuillez installer GD2 (sous linux : <code>sudo apt-get install php5-gd && service apache2 restart</code>)');
+	if(!in_array('sqlite',PDO::getAvailableDrivers())) throw new Exception('Le driver SQLITE est requis, veuillez installer sqlite3 (sous linux : <code>sudo apt-get install php5-sqlite && service apache2 restart</code>)');
+	
+	
+	//Class entities
+	Entity::install(__ROOT__.'class');
 
     $admin = new User();
     $admin->login = 'admin';
