@@ -245,8 +245,8 @@ class Type
             break;
             case 'part':
                 
-                if (!file_exists($PART_PATH)) {
-                    mkdir($PART_PATH);
+                if (!file_exists(PART_PATH)) {
+                    mkdir(PART_PATH);
                 }
                 foreach ($parts as $p):
 
