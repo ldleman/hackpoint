@@ -186,6 +186,7 @@ switch ($_['action']) {
             $sketchs = Sketch::loadAll(array('owner'=>$myUser->id));
             foreach ($sketchs as $sketch) {
                 $sketch->label = html_entity_decode($sketch->label);
+                $sketch->public = $sketch->public == 0 ? "Non" : "Oui";
                 $response['rows'][] = $sketch->toArray();
             }
         });

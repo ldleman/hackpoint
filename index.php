@@ -30,6 +30,7 @@
 						<tr data-id="{{id}}" style="display:none;">
 							<td><a href="sketch.php?id={{id}}">{{id}}</a></td>
 							<td><a href="sketch.php?id={{id}}">{{label}}</a></td>
+							<td><a href="sketch.php?id={{id}}">{{public}}</a></td>
 							<td>
 								<div onclick="delete_sketch(this);" class="btn btn-danger"><i class="fa fa-times"></i></div>
 							</td>
