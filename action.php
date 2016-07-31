@@ -183,7 +183,8 @@ switch ($_['action']) {
     case 'search_sketch':
         Action::write(function ($_, &$response) {
             global $myUser;
-            $sketchs = Sketch::loadAll(array('owner'=>$myUser->id));
+            
+            $sketchs = $myUser->connected() ? Sketch::loadAll(array('owner' => $myUser->id)) : Sketch::loadAll(array('public' => 1));            
             foreach ($sketchs as $sketch) {
                 $sketch->label = html_entity_decode($sketch->label);
                 $sketch->public = $sketch->public == 0 ? "Non" : "Oui";
@@ -315,9 +316,7 @@ switch ($_['action']) {
         });
     break;
     
-    case 'search_resources':
-        
-        
+    case 'search_resources':        
         Action::write(function ($_, &$response) {
             
             if (!isset($_['id']) || !is_numeric($_['id'])) {
@@ -329,8 +328,7 @@ switch ($_['action']) {
                 $resource->label = html_entity_decode($resource->label);
                 $resource->content = null;
                 $response['rows'][] = $resource->toArray();
-            }
-                
+            }                
         });
     break;
     
@@ -354,8 +352,9 @@ switch ($_['action']) {
         
     break;
     
-    //COMPONENT
 
+
+    //COMPONENT
     case 'upload_component_image':
         global $myUser;
         $ext = explode('.', $_FILES['file']['name']);
@@ -365,9 +364,7 @@ switch ($_['action']) {
         }
         imageResize($_FILES['file']['tmp_name'], 100, 100);
         echo 'data:image/png;base64,'.base64_encode(file_get_contents($_FILES['file']['tmp_name']));
-    break;
-    
-    
+    break;    
     
     case 'search_component':
         Action::write(function ($_, &$response) {
@@ -384,9 +381,7 @@ switch ($_['action']) {
                 $response['rows'][] = $part->toArray();
             }
         });
-    break;
-
-    
+    break;    
 
     case 'delete_component':
         Action::write(function ($_, &$response) {
@@ -436,8 +431,8 @@ switch ($_['action']) {
         });
     break;
 
-    //RESOURCE
 
+    //RESOURCE
     case 'save_resource':
         Action::write(function ($_, &$response) {
             global $myUser;
@@ -457,6 +452,7 @@ switch ($_['action']) {
             $response = $resource->toArray();
         });
     break;
+
     case 'save_resource_content':
         Action::write(function ($_, &$response) {
             global $myUser;
@@ -523,6 +519,7 @@ switch ($_['action']) {
             $response = Type::toHtml($resource, $sketch);
         });
     break;
+
     case 'delete_resource':
         Action::write(function ($_, &$response) {
             global $myUser;
@@ -560,18 +557,15 @@ switch ($_['action']) {
         });
     break;
     
-    case 'download_file':
-            
+    case 'download_file':            
             global $myUser;
-            $path = SKETCH_PATH.'/'.$_['resource'];
-            
+            $path = SKETCH_PATH.'/'.$_['resource'];            
             
             $resource = Resource::getById($_['resource']);
             $sketch = $resource->sketch_object;
             if ($myUser->id != $sketch->owner && !$sketch->public) {
                 throw new Exception("Permission refusée, le sketch est privé");
-            }
-            
+            }           
         
             
             $filename = $resource->label.'-'.time().'.zip';
@@ -584,8 +578,7 @@ switch ($_['action']) {
             if ($res === true) {
                 foreach (glob($path.'/*') as $file) {
                     $zip->addFile($file, basename($file));
-                }
-                
+                }                
                 
                 $zip->close();
             }
@@ -619,10 +612,8 @@ switch ($_['action']) {
         });
     break;
     
-    /*PART*/
-    
-    case 'search_part':
-    
+    /*PART*/    
+    case 'search_part':    
     Action::write(function ($_, &$response) {
             if (!isset($_['id']) || !is_numeric($_['id'])) {
                 throw new Exception("Ressource non spécifiée");
@@ -657,6 +648,7 @@ switch ($_['action']) {
             ResourcePart::deleteById($_['id']);
         });
     break;
+    
     case 'save_part':
         Action::write(function ($_, &$response) {
             global $myUser;
