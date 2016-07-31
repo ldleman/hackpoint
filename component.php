@@ -1,11 +1,13 @@
 <?php require_once __DIR__.DIRECTORY_SEPARATOR.'header.php'; ?>
 
-	<?php if ($myUser->connected()): ?>
+	
 
 			<div class="jumbotron">
 			<div class="jumbotron-contents">
 				<h2>Mes composants</h2>
-				<a  onclick="edit_component();" class="btn btn-success"><i class="fa fa-plus"></i> Ajouter</a>
+				<?php if ($myUser->connected()): ?>
+					<a  onclick="edit_component();" class="btn btn-success"><i class="fa fa-plus"></i> Ajouter</a>
+				<?php endif; ?>
 				<table class="table table-striped table-hover" id="components">
 					<thead>
 						<tr>
@@ -25,8 +27,10 @@
 							<td>{{brand}}</td>
 							<td>{{price}}</td>
 							<td>
-								<div onclick="edit_component(this);" class="btn btn-primary"><i class="fa fa-pencil"></i></div>
-								<div onclick="delete_component(this);" class="btn btn-danger"><i class="fa fa-times"></i></div>
+								<?php if ($myUser->connected()): ?>
+									<div onclick="edit_component(this);" class="btn btn-primary"><i class="fa fa-pencil"></i></div>
+									<div onclick="delete_component(this);" class="btn btn-danger"><i class="fa fa-times"></i></div>
+								<?php endif; ?>
 							</td>
 						</tr>
 					</tbody>
@@ -34,6 +38,9 @@
 			</div>
 		</div>
 		
+
+
+
 	<!-- Modal -->
 	<div id="editComponent" class="modal fade" role="dialog" data-id="" data-action="save_component">
 	  <div class="modal-dialog">
@@ -73,15 +80,8 @@
 	    </div>
 
 	  </div>
-	</div>
-			
-	<?php
-     else:
-        header('index.php');
-     endif; ?>
-
-<?php 
+	</div>			
 
 
 
-require_once __ROOT__.'footer.php' ?>
+<?php require_once __ROOT__.'footer.php' ?>

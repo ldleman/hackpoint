@@ -244,6 +244,10 @@ class Type
                 $resource->save();
             break;
             case 'part':
+                
+                if (!file_exists(PART_PATH)) {
+                    mkdir(PART_PATH);
+                }
                 foreach ($parts as $p):
 
                     $part = new Part();
