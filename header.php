@@ -36,12 +36,14 @@ require_once __DIR__.DIRECTORY_SEPARATOR.'common.php';
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
 
-        <?php if ($myUser->connected()): ?>
+        
          <div id="bs-example-navbar-collapse-5" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li <?php echo $page=='index.php'?'class="active"':''; ?>><a href="index.php">Sketch</a></li>
             <li <?php echo $page=='component.php'?'class="active"':''; ?>><a href="component.php">Composants</a></li>
           </ul>
+
+          <?php if (  $myUser->connected()): ?>
           <ul class="nav navbar-nav navbar-right">
             <li class="dropdown <?php echo $page=='account.php'?'active':''; ?>" >
               <a data-toggle="dropdown" class="dropdown-toggle" href="#"> Connecté en tant que <?php echo $myUser->login; ?> <b class="caret"></b></a>
@@ -52,10 +54,11 @@ require_once __DIR__.DIRECTORY_SEPARATOR.'common.php';
                 <li><a href="action.php?action=logout">Déconnexion</a></li>
               </ul>
             </li>
-          </ul>					  
-        </div><!-- /.navbar-collapse -->
+          </ul>	
+          <?php endif  ?>
+        
 
-      <?php else :  ?>
+        <?php if ( !$myUser->connected()): ?>     
         <ul class="nav navbar-nav navbar-right">
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b>Connexion</b> <span class="caret"></span></a>
@@ -83,7 +86,7 @@ require_once __DIR__.DIRECTORY_SEPARATOR.'common.php';
      </li>
    </ul>
   <?php endif; ?>
-
+</div><!-- /.navbar-collapse --> 
 
 
 </div><!-- /.container-fluid -->
