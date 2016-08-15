@@ -150,6 +150,26 @@ function getExtIcon($ext){
 	return $icon;
 };
 
+function max_upload_size($limits = array()){
+	$limits[]= str_replace('M','',ini_get('post_max_size')) *1048576;
+	$limits[]= str_replace('M','',ini_get('upload_max_filesize')) *1048576;
+	return readable_size(min($limits));
+}
+
+function readable_size($bytes)
+{
+		 if($bytes<1024){
+		 	return round(($bytes / 1024), 2).' o';
+		 }elseif(1024<$bytes && $bytes<1048576){
+		 	return round(($bytes / 1024), 2).' ko';
+		 }elseif(1048576<$bytes && $bytes<1073741824){
+		 	return round(($bytes / 1024)/1024, 2).' Mo';
+		 }elseif(1073741824<$bytes){
+		 	return round(($bytes / 1024)/1024/1024, 2).' Go';
+		 }
+}
+
+
 function imageResize($image,$w,$h){
 	$resource = imagecreatefromstring(file_get_contents($image));
 	$size = getimagesize($image);
@@ -159,5 +179,9 @@ function imageResize($image,$w,$h){
 	imagedestroy($resource);
 	imagejpeg($thumbnail , $image, 100);
 }
+
+
+
+
 
 ?>

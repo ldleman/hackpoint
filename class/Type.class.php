@@ -38,6 +38,7 @@ class Type{
 				'readOnly' =>  false
 			)
 		);
+
 		$types['clike'] = array(
 			'label' => 'Source C++/C',
 			'extension' => 'cpp',
@@ -48,6 +49,7 @@ class Type{
 				'readOnly' =>  false
 			)
 		);
+
 		$types['shell'] = array(
 			'label' => 'Shell',
 			'extension' => 'sh',
@@ -69,6 +71,18 @@ class Type{
 				'readOnly' =>  false
 			)
 		);
+
+		$types['xml'] = array(
+			'label' => 'Source XML',
+			'extension' => 'xml',
+			'codemirror' => array(
+				'mode'=>'htmlmixed',
+				'theme'=>'monokai',
+				'lineNumbers' => true,
+				'readOnly' =>  false
+			)
+		);
+
 
 		$types['python'] = array(
 			'label' => 'Source Python',
@@ -116,6 +130,17 @@ class Type{
 		$types['javascript'] = array(
 			'label' => 'Source Javascript',
 			'extension' => 'js',
+			'codemirror' => array(
+				'mode'=>'javascript',
+				'theme'=>'monokai',
+				'lineNumbers' => true,
+				'readOnly' =>  false
+			)
+		);
+
+		$types['json'] = array(
+			'label' => 'Source JSON',
+			'extension' => 'json',
 			'codemirror' => array(
 				'mode'=>'javascript',
 				'theme'=>'monokai',

@@ -6,6 +6,8 @@
 			<div class="jumbotron-contents">
 				<form method="POST" action="action.php?action=save_user&amp;id=<?php echo $myUser->id;?>">
 					<h2>Mon profil</h2>
+					<label for="login">Identifiant</label>
+	      			<input type="text" id="login" name="login" value="<?php echo $myUser->login; ?>" class="form-control"/>
 					<label for="password">Nouveau mot de passe</label>
 	      			<input type="password" id="password" name="password" class="form-control"/>
 	      			<label for="confirmPassword">Nouveau mot de passe (Confirmation)</label>

@@ -140,10 +140,114 @@
 				return results[1] || 0;
 			}
 	}
+
+
+	$.upzoneTransfert = function(e,o){
+		var list = [];
+		if(e.dataTransfer) {
+			filelist = e.dataTransfer.files;
+		} else if(e.target) {
+			filelist = e.target.files;
+		}
+
+		if (!filelist || !filelist.length ) return;
+
+		        totalSize = 0;
+		        totalProgress = 0;
+		
+
+		        for (var i = 0; i < filelist.length && i < 5; i++) {
+		            list.push(filelist[i]);
+		            totalSize += filelist[i].size;
+		        }
+
+		        if (list.length) {
+		           
+
+		            var nextFile = list.shift();
+		            //if (nextFile.size >= 262144) { // 256 kb
+		         
+				        var xhr = new XMLHttpRequest();
+				        xhr.open('POST', o.url);
+				        xhr.onload = function() {
+				           // result.innerHTML += this.responseText;
+				           // handleComplete(file.size);
+				           if(o.success!=null)o.success(this.responseText);
+				        };
+				        xhr.onerror = function() {
+				           // result.textContent = this.responseText;
+				          //  handleComplete(file.size);
+				          console.log(this.responseText,'error');
+				          if(o.error!=null)o.error(this.responseText);
+				        };
+				        xhr.upload.onprogress = function(event) {
+				           // handleProgress(event);
+				           //console.log(event);
+				        }
+				        xhr.upload.onloadstart = function(event) {
+				        }
+
+				        // création de l'objet FormData
+				        var formData = new FormData();
+				        for(var k in o)
+				        	formData.append(k, o[k]);
+				        
+				      
+				        formData.append('file', nextFile);
+				        xhr.send(formData);
+		           
+		 }
+
+	}
+
 	
 $.fn.extend({
 	
+	upzone : function (option){
+		var defaults = {
+			url : '',
+			success : function(){},
+			error : function(){}
+		}
+		
+		var o = $.extend(defaults,option);
+		return this.each(function() {
+			var obj = $(this);
 
+			obj.before('<input type="file" id="test" style="display:none">');
+			
+			$('#test').change(function(e) {
+				
+				$.upzoneTransfert(e,o);
+
+     	 	});
+			obj.click(function(){
+				$('#test').trigger('click');
+			});
+
+			obj.get(0).addEventListener('drop', function(event) {
+		        event.stopPropagation();
+		        event.preventDefault();
+
+		        $.upzoneTransfert(event,o);
+
+		      	//var filelist = event.dataTransfer.files;
+		  
+		        
+
+
+
+    		}, false);
+
+        	obj.get(0).addEventListener('dragover', function handleDragOver(event) {
+		        event.stopPropagation();
+		        event.preventDefault();
+
+		      
+		    }, false);
+
+		});
+	},
 	
 	fill: function (option,callback){
 		

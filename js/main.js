@@ -57,15 +57,28 @@ function init_component(){
 
 	search_component();
 
+/*
+	$('#imageUpload').upzone({
+		url : 'action.php?action=upload_component_image',
+		id  : $('#sketch').attr('data-id'),
+		success : function(server){
+			$('#imageUpload').attr('src',server);
+		}
+	});
+*/
+
 	$('#imageUpload').dropzone({
+
 			url : 'action.php?action=upload_component_image',
 			success : function(useless,server){
+					if(server.error != null)
+						return alert(server.error);
 					
-        			$('#imageUpload').attr('src',server);
+        			$('#imageUpload').attr('src',server.thumb);
       			
 			},
 			sending : function(file, xhr, formData){
-				//formData.append('id', $('#sketch').attr('data-id'));
+				formData.append('id', $('#sketch').attr('data-id'));
 			}
 	});
 

@@ -31,13 +31,17 @@ switch ($_['action']){
 
 	case 'save_user':
 		try{
-		global $myUser;
-		if(!$myUser->connected()) throw new Exception("Permission refusée, seul un connecté peux faire ça");
-		if($myUser->id!=$_['id']) throw new Exception("Permission refusée, seul le propriétaire du compte peux faire ça");
-		if($_['password']!=$_['confirmPassword']) throw new Exception("Les deux mot de passe ne correspondent pas");
-			$myUser->password = User::password_encrypt($_['password']);
+			global $myUser;
+			if(!$myUser->connected()) throw new Exception("Permission refusée, seul un connecté peux faire ça");
+			if($myUser->id!=$_['id']) throw new Exception("Permission refusée, seul le propriétaire du compte peux faire ça");
+
+			if(!empty($_['password']) && $_['password']!=$_['confirmPassword']) throw new Exception("Les deux mot de passe ne correspondent pas");
+			if(!empty($_['password'])) $myUser->password = User::password_encrypt($_['password']);
+			$myUser->login = $_['login']; 
+
 			$myUser->save();
-			$_SESSION['success'] = "Mot de passe modifié avec succès";
+			$_SESSION['currentUser'] = serialize($myUser);
+			$_SESSION['success'] = "Compte modifié avec succès";
 		}catch(Exception $e){
 			$_SESSION['error'] = $e->getMessage();
 		}
@@ -299,11 +303,22 @@ switch ($_['action']){
 
 	case 'upload_component_image':
 		global $myUser;
-		$ext = explode('.',$_FILES['file']['name']);
-		$ext = strtolower(array_pop($ext));
-		if(!in_array($ext,explode(',',ALLOWED_RESOURCE_IMAGE))) exit();
-		imageResize($_FILES['file']['tmp_name'],100,100);
-		echo 'data:image/png;base64,'.base64_encode(file_get_contents($_FILES['file']['tmp_name']));
+		$response = array();
+		try{
+			if(!isset($_FILES['file'])) throw new Exception("Le fichier est trop gros pour votre configuration php (php.ini), taille max :".max_upload_size(array(ALLOWED_RESOURCE_SIZE)));
+			$ext = explode('.',$_FILES['file']['name']);
+			$ext = strtolower(array_pop($ext));
+			if(!in_array($ext,explode(',',ALLOWED_RESOURCE_IMAGE))) throw new Exception("Format d'image interdit, autorisé : ".ALLOWED_RESOURCE_IMAGE);
+			if($_FILES['file']['size']>ALLOWED_RESOURCE_SIZE) throw new Exception("Le fichier est trop gros pour votre configuration programme, taille max: ".max_upload_size(array(ALLOWED_RESOURCE_SIZE)));
+		
+
+			imageResize($_FILES['file']['tmp_name'],100,100);
+			$response['thumb']  = 'data:image/png;base64,'.base64_encode(file_get_contents($_FILES['file']['tmp_name']));
+		}catch(Exception $e){
+			$response['error'] = $e->getMessage();
+		}
+		header('Content-Type:application/json');
+		echo json_encode($response);
 	break;
 	
 	
@@ -318,7 +333,7 @@ switch ($_['action']){
 				if($part->image==''){
 					$part->image = 'img/default_image.png';
 				}else{
-					$part->image = PART_PATH.html_entity_decode($part->image);
+					$part->image = PART_PATH.html_entity_decode($part->image).'?t='.time();
 				}
 				$response['rows'][] = $part->toArray();
 			}

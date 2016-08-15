@@ -51,7 +51,7 @@
 	        <input class="form-control" type="text" id="brand"/>
 	        <label for="label">Prix</label>
 	        <input class="form-control" type="text" id="price"/>
-			<label for="imageUpload">Image (fichier)</label><br/>
+			<label for="imageUpload">Image (fichier) (taille max : <?php echo max_upload_size(array(ALLOWED_RESOURCE_SIZE)); ?> )</label><br/>
 			<img src="img/default_image.png" style="width:100px;height:100px;" id="imageUpload"/>
 			
 	      </div>
