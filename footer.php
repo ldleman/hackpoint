@@ -1,4 +1,5 @@
 </div>
+</div>
 		<!-- body -->
   
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
@@ -10,8 +11,9 @@
         <script src="js/vendor/codemirror.js"></script>
          <?php 
         echo PHP_EOL;
-        foreach(glob('js/vendor/codemirror/*.js') as $js)
+        foreach (glob('js/vendor/codemirror/*.js') as $js) {
             echo "\t\t<script type='text/javascript' src='$js'></script>".PHP_EOL;
+        }
         ?>
 		<script src="js/plugins.js"></script>
         <script src="js/vendor/jquery-ui.min.js"></script>

@@ -40,32 +40,39 @@
 		
 
 <?php
-try{
-mb_internal_encoding('UTF-8');
-require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'constant.php');
-require_once(__ROOT__.'function.php');
-date_default_timezone_set(TIME_ZONE); 
-set_error_handler('errorToException');
-spl_autoload_register('app_autoloader');
+try {
+    mb_internal_encoding('UTF-8');
+    require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'constant.php');
+    require_once(__ROOT__.'function.php');
+    date_default_timezone_set(TIME_ZONE);
+    set_error_handler('errorToException');
+    spl_autoload_register('app_autoloader');
+    
+    $_ = array_map('secure_user_vars', array_merge($_POST, $_GET));
+    
+    if (isset($_SESSION['currentUser'])) {
+        $myUser =unserialize($_SESSION['currentUser']);
+    }
+
 	
-$_ = array_map('secure_user_vars',array_merge($_POST,$_GET));
+	if(!is_writable (__ROOT__.UPLOAD_PATH)) throw new Exception('Le dossier '.__ROOT__.UPLOAD_PATH.' doit être accessible en ecriture, merci de taper la commande linux <code>sudo chown -R www-data:www-data '.__ROOT__.UPLOAD_PATH.'</code> ou de régler le dossier en écriture via votre client ftp');
+	if(!is_writable (dirname(__ROOT__.DATABASE_PATH))) throw new Exception('Le dossier '.dirname(__ROOT__.DATABASE_PATH).' doit être accessible en ecriture, merci de taper la commande linux <code>sudo chown -R www-data:www-data '.dirname(__ROOT__.DATABASE_PATH).'</code> ou de régler le dossier en écriture via votre client ftp');
+	if(!file_exists(__ROOT__.SKETCH_PATH)) mkdir(__ROOT__.SKETCH_PATH);
 	
-if(isset($_SESSION['currentUser']))
-$myUser =unserialize($_SESSION['currentUser']);	
+    if (file_exists(__ROOT__.DATABASE_PATH) && filesize(__ROOT__.DATABASE_PATH)>0) throw new Exception('Base déjà installée, pour réinstaller la base, supprimez le fichier '.DATABASE_PATH.', puis rechargez cette page.');
+	if(!extension_loaded('gd') || !function_exists('gd_info'))  throw new Exception('L\'extension php GD2  est requise, veuillez installer GD2 (sous linux : <code>sudo apt-get install php5-gd && service apache2 restart</code>)');
+	if(!in_array('sqlite',PDO::getAvailableDrivers())) throw new Exception('Le driver SQLITE est requis, veuillez installer sqlite3 (sous linux : <code>sudo apt-get install php5-sqlite && service apache2 restart</code>)');
+	
+	
+	//Class entities
+	Entity::install(__ROOT__.'class');
 
-
-if(file_exists(__ROOT__.DATABASE_PATH) && filesize(__ROOT__.DATABASE_PATH)>0) throw new Exception('Base déjà installée, pour réinstaller la base, supprimez le fichier '.DATABASE_PATH.', puis rechargez cette page.');
-
-
-//Class entities
-Entity::install(__ROOT__.'class');
-
-$admin = new User();
-$admin->login = 'admin';
-$admin->password = User::password_encrypt('admin');
-$admin->rank = 'ADMIN';
-$admin->save();
-?>
+    $admin = new User();
+    $admin->login = 'admin';
+    $admin->password = User::password_encrypt('admin');
+    $admin->rank = 'ADMIN';
+    $admin->save();
+    ?>
 
 <div class="alert alert-success alert-dismissable">
 	<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
@@ -73,14 +80,16 @@ $admin->save();
 </div>
 <?php
 
-}catch(Exception $e){
-?>
+} catch (Exception $e) {
+    ?>
 
 <div class="alert alert-danger">
 	<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-	<strong>Oops!</strong> <?php echo $e->getMessage(); ?> 
+	<strong>Oops!</strong> <?php echo $e->getMessage();
+    ?> 
 </div>
-<?php } ?>
+<?php 
+} ?>
 <a class="btn btn-primary" href="index.php">Revenir à l'index</a>
  </div>
 		<!-- body -->
