@@ -4,17 +4,18 @@ require_once __DIR__.DIRECTORY_SEPARATOR.'common.php';
 <!doctype html>
 <html class="no-js" lang="">
     <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title><?php echo PROGRAM_NAME.' V'.SOURCE_VERSION.'.'.BASE_VERSION ?></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-  		<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,800,700,400italic,600italic,700italic,800italic,300italic" rel="stylesheet" type="text/css">
-  		<link rel="stylesheet" href="css/bootflat.min.css">
-      <link rel="stylesheet" href="css/font-awesome.min.css">
-      <link rel="stylesheet" href="css/codemirror.css">
-      <link rel="stylesheet" href="css/monokai.css">
-      <link rel="stylesheet" href="css/main.css">
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title><?php echo PROGRAM_NAME.' V'.SOURCE_VERSION.'.'.BASE_VERSION ?></title>
+		<link rel="icon" type="image/png" href="img/favicon.png">
+		<meta name="description" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,800,700,400italic,600italic,700italic,800italic,300italic" rel="stylesheet" type="text/css">
+		<link rel="stylesheet" href="css/bootflat.min.css">
+		<link rel="stylesheet" href="css/font-awesome.min.css">
+		<link rel="stylesheet" href="css/codemirror.css">
+		<link rel="stylesheet" href="css/monokai.css">
+		<link rel="stylesheet" href="css/main.css">
     </head>
     <body>
         <div id="wrap">
@@ -36,28 +37,27 @@ require_once __DIR__.DIRECTORY_SEPARATOR.'common.php';
                     </div>
                     <!-- Collect the nav links, forms, and other content for toggling -->
                     
-					<?php if ($myUser->connected()): ?>
+					
 					<div id="bs-example-navbar-collapse-5" class="collapse navbar-collapse">
                       <ul class="nav navbar-nav">
                         <li <?php echo $page=='index.php'?'class="active"':''; ?>><a href="index.php">Sketch</a></li>
-                        <li <?php echo $page=='component.php'?'class="active"':''; ?>><a href="component.php">Composants</a></li>
-                        <!--
-                        <li class="dropdown">
-                          <a data-toggle="dropdown" class="dropdown-toggle" href="#">Réglages <b class="caret"></b></a>
-                          <ul role="menu" class="dropdown-menu">
-                            <li class="dropdown-header">Setting</li>
-                            <li><a href="#">Action</a></li>
-                            <li><a href="#">Another action</a></li>
-                            <li><a href="#">Something else here</a></li>
-                            <li class="divider"></li>
-                            <li class="active"><a href="#">Separated link</a></li>
-                            <li class="divider"></li>
-                            <li class="disabled"><a href="#">One more separated link</a></li>
-                          </ul>
-                        </li>
-                        -->
+                        <?php if ($myUser->connected()): ?>
+						<li <?php echo $page=='component.php'?'class="active"':''; ?>><a href="component.php">Composants</a></li>
+						<?php endif; ?>
                       </ul>
                       <ul class="nav navbar-nav navbar-right">
+					  
+						<?php if (!$myUser->connected()): ?>
+						<li>
+							<form id="loginForm" method="post" action="action.php?action=login" class="navbar-form navbar-right">
+								Identifiant : 
+								<input name="login" placeholder="Identifiant" class="form-control" type="text">
+								Mot de passe : 
+								<input name="password" placeholder="Mot de passe" class="form-control" type="password">
+								<input class="btn btn-success" value="Connexion" type="submit">
+							</form>
+						</li>
+						<?php else: ?>
                         <li class="dropdown <?php echo $page=='account.php'?'active':''; ?>" >
                           <a data-toggle="dropdown" class="dropdown-toggle" href="#"> Connecté en tant que <?php echo $myUser->login; ?> <b class="caret"></b></a>
                           <ul role="menu" class="dropdown-menu">
@@ -67,6 +67,7 @@ require_once __DIR__.DIRECTORY_SEPARATOR.'common.php';
                             <li><a href="action.php?action=logout">Déconnexion</a></li>
                           </ul>
                         </li>
+						<?php endif; ?>
                       </ul>
 					 
 
@@ -75,7 +76,7 @@ require_once __DIR__.DIRECTORY_SEPARATOR.'common.php';
 					           <!--<button class="btn btn-danger navbar-btn" onclick="window.location='action.php?action=logout';" type="button">MAJ</button>-->
 					  
                     </div><!-- /.navbar-collapse -->
-					<?php endif; ?>
+					
 					
 					
                   </div><!-- /.container-fluid -->

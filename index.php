@@ -1,10 +1,12 @@
 <?php require_once __DIR__.DIRECTORY_SEPARATOR.'header.php'; ?>
 
-	<?php if ($myUser->connected()): ?>
+	
 
-			<div class="jumbotron">
+			<div class="jumbotron" id="sketchBlock">
 			<div class="jumbotron-contents">
-				<h2>Mes sketch(s)</h2>
+				<h2>Sketch(s)</h2>
+				
+				<?php if ($myUser->connected()): ?>
 				<div class="btn-group">
 				  <button class="btn btn-success" type="button" data-toggle="modal" data-target="#editSketch">Ajouter</button>
 				  <button data-toggle="dropdown" class="btn btn-success dropdown-toggle" type="button">
@@ -17,6 +19,7 @@
 					<li><a id="importJsonSketch">Importer depuis un fichier json</a></li>
 				  </ul>
 				</div>
+				<?php endif; ?>
 				
 				<table class="table table-striped table-hover" id="sketchs">
 					<thead>
@@ -85,21 +88,7 @@
 	  </div>
 	</div>
 			
-	<?php else: ?>
-		<div class="jumbotron"  id="loginBlock">
-			<div class="jumbotron-contents">
-				<h2>Connexion</h2>
-				<form action="action.php?action=login" method="post">
-				<label for="login">Identifiant</label>
-				<input type="text" class="form-control" name="login" placeholder="Identifiant">
-				<label for="password">Mot de passe</label>
-				<input type="password" class="form-control" name="password"  placeholder="Mot de passe">
-				<br/>
-				<input type="submit" class="btn btn-primary btn-block" value="Connexion"/>
-				</form>
-			</div>
-		</div>
-	<?php endif; ?>
+
 
 <?php 
 

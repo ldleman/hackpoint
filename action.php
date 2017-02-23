@@ -156,7 +156,13 @@ switch ($_['action']){
 	case 'search_sketch':
 		Action::write(function($_,&$response){
 			global $myUser;
-			$sketchs = Sketch::loadAll(array('owner'=>$myUser->id));
+			
+			$filters = array('public'=>1);
+			if($myUser->connected()){
+				$filters = array('owner'=>$myUser->id);
+			}
+			
+			$sketchs = Sketch::loadAll($filters);
 			foreach($sketchs as $sketch){
 				$sketch->label = html_entity_decode($sketch->label);
 				$response['rows'][] = $sketch->toArray();

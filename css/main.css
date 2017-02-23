@@ -55,6 +55,12 @@ display:none;
 	cursor:pointer;
 }
 
+#sketchBlock h2{
+	margin:0 10px 0 0;
+	display:inline-block;
+	vertical-align:top;
+}
+
 .footer{
 	position: relative;
 	height: 60px;
@@ -224,6 +230,17 @@ div.CodeMirror{
 	margin-top:0;
 }
 
+#loginForm {
+    color: #8c8c8c;
+    margin: 15px 0px 0 0;
+}
+#loginForm input {
+    width: 100px;
+    height: auto;
+    border-radius: 0;
+    padding: 0 5px 0 5px;
+}
+
 .componentImage{
 	width:100px;
 	height:100px;
@@ -257,4 +274,9 @@ div.CodeMirror{
 	color:#ffffff;
 	cursor:pointer;
 	text-align: center;
+}
+
+a.navbar-brand {
+    padding-left: 45px;
+    background: url('../img/icon.png') no-repeat 5px center !important;
 }
