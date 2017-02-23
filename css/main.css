@@ -215,6 +215,15 @@ div.CodeMirror{
 	margin-right:10px;
 }
 
+#loginBlock{
+	max-width:500px;
+	margin:10px auto 10px auto;
+	padding:15px;
+}
+#loginBlock h2{
+	margin-top:0;
+}
+
 .componentImage{
 	width:100px;
 	height:100px;

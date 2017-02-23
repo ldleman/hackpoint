@@ -86,7 +86,7 @@
 	</div>
 			
 	<?php else: ?>
-		<div class="jumbotron">
+		<div class="jumbotron"  id="loginBlock">
 			<div class="jumbotron-contents">
 				<h2>Connexion</h2>
 				<form action="action.php?action=login" method="post">
