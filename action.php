@@ -239,10 +239,15 @@ switch ($_['action']){
 			$name = $resource->id.'.'.$ext;
 			$path = SKETCH_PATH.$name;	
 			move_uploaded_file($_FILES['file']['tmp_name'], $path);
+			
 			$resource->content = $name;
 			$resource->save();
 			$response = array_merge(Type::get($resource->type));
-			$response['url'] = $path.'?v='.time();
+			//$response['url'] = $path.'?v='.time();
+			
+			$response['url'] ="action.php?action=get_resource_image&id=".$resource->id."&v=".time();
+			
+			
 		});
 	break;
 	

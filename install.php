@@ -63,6 +63,7 @@ try {
 	if(!extension_loaded('gd') || !function_exists('gd_info'))  throw new Exception('L\'extension php GD2  est requise, veuillez installer GD2 (sous linux : <code>sudo apt-get install php5-gd && service apache2 restart</code>)');
 	if(!in_array('sqlite',PDO::getAvailableDrivers())) throw new Exception('Le driver SQLITE est requis, veuillez installer sqlite3 (sous linux : <code>sudo apt-get install php5-sqlite && service apache2 restart</code>)');
 	
+	if (!file_exists(__ROOT__.PART_PATH)) mkdir(__ROOT__.PART_PATH,0755,true);
 	
 	//Class entities
 	Entity::install(__ROOT__.'class');
