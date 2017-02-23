@@ -276,6 +276,7 @@ div.CodeMirror{
 }
 .btn-mini {
     padding: 0 4px;
+	font-size:14px!important;
     border-radius: 4px;
 }
 

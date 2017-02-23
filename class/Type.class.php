@@ -155,7 +155,8 @@ class Type{
 				'url'     => 'action.php?action=upload_resource',
 				'element' => '#resource p img:eq(0)',
 				'callback' => '$(\'#resource img:eq(0)\').attr(\'src\',r.url);'
-			)
+			),
+			'extension' => 'jpg'
 		);
 		
 		$types['files'] = array(
@@ -376,7 +377,7 @@ class Type{
 					
 						$response['content'] .= '<td>';
 						if($myUser->id == $sketch->owner)
-						$response['content'] .= '<div class="btn btn-danger" onclick="delete_file(this);"><i class="fa fa-times" ></i></div>';
+						$response['content'] .= '<div class="btn btn-danger btn-mini btn-rounded pulse" onclick="delete_file(this);"><i class="fa fa-times" ></i></div>';
 						$response['content'] .= '</td>';
 					
 					$response['content'] .= '</tr>';
@@ -409,7 +410,7 @@ class Type{
 							<td ><a href="{{link}}"><div class="componentImage"><img src="{{image}}"/></div> {{label}}</a> {{#price}}<code>{{price}} €</code>{{/price}}{{#brand}} <small>{{brand}}</small>{{/brand}}</td>';
 					
 					if($myUser->id == $sketch->owner)
-						$response['content'] .= '<td><div class="btn btn-danger" onclick="delete_part(this);"><i class="fa fa-times" ></i></div></td>';
+						$response['content'] .= '<td><div class="btn btn-danger btn-mini btn-rounded pulse" onclick="delete_part(this);"><i class="fa fa-times" ></i></div></td>';
 					
 					$response['content'] .= '</tr>';
 					$response['content'] .='</tbody></table>';
