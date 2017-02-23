@@ -306,9 +306,13 @@ switch ($_['action']){
 		$ext = strtolower(array_pop($ext));
 		$types = Type::all();
 		$type = 'readme';
-		foreach($types as $uid=>$tp)
-			if(isset($tp['extension']) && $ext == $tp['extension']) $type = $uid;
-		
+		foreach($types as $uid=>$tp){
+			if(!isset($tp['extension'])) continue;
+			foreach($tp['extension'] as $ext2){
+				if($ext == $ext2) $type = $uid;
+			}
+			
+		}
 		Type::fromFileImport($_FILES['file'],$sketch,$type);
 		
 	break;

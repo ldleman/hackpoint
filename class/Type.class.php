@@ -21,7 +21,7 @@ class Type{
 
 		$types['readme'] = array(
 			'label' => 'README',
-			'extension' => 'md',
+			'extension' => array('md'),
 			'codemirror' => array(
 				'smartIndent' => false,
 				'readOnly' =>  false
@@ -30,7 +30,7 @@ class Type{
 
 		$types['arduino'] = array(
 			'label' => 'Source Arduino',
-			'extension' => 'ino',
+			'extension' => array('ino'),
 			'codemirror' => array(
 				'mode'=>'clike',
 				'theme'=>'monokai',
@@ -41,7 +41,7 @@ class Type{
 
 		$types['clike'] = array(
 			'label' => 'Source C++/C',
-			'extension' => 'cpp',
+			'extension' => array('cpp'),
 			'codemirror' => array(
 				'mode'=>'clike',
 				'theme'=>'monokai',
@@ -52,7 +52,7 @@ class Type{
 
 		$types['shell'] = array(
 			'label' => 'Shell',
-			'extension' => 'sh',
+			'extension' => array('sh'),
 			'codemirror' => array(
 				'mode'=>'shell',
 				'theme'=>'monokai',
@@ -63,7 +63,7 @@ class Type{
 
 		$types['php'] = array(
 			'label' => 'Source PHP',
-			'extension' => 'php',
+			'extension' => array('php'),
 			'codemirror' => array(
 				'mode'=>'php',
 				'theme'=>'monokai',
@@ -74,7 +74,7 @@ class Type{
 
 		$types['xml'] = array(
 			'label' => 'Source XML',
-			'extension' => 'xml',
+			'extension' => array('xml'),
 			'codemirror' => array(
 				'mode'=>'htmlmixed',
 				'theme'=>'monokai',
@@ -86,7 +86,7 @@ class Type{
 
 		$types['python'] = array(
 			'label' => 'Source Python',
-			'extension' => 'py',
+			'extension' => array('py'),
 			'codemirror' => array(
 				'mode'=>'python',
 				'theme'=>'monokai',
@@ -97,7 +97,7 @@ class Type{
 
 		$types['c'] = array(
 			'label' => 'Source C++',
-			'extension' => 'cpp',
+			'extension' => array('cpp'),
 			'codemirror' => array(
 				'mode'=>'clike',
 				'theme'=>'monokai',
@@ -108,7 +108,7 @@ class Type{
 
 		$types['java'] = array(
 			'label' => 'Source JAVA',
-			'extension' => 'java',
+			'extension' => array('java'),
 			'codemirror' => array(
 				'mode'=>'java',
 				'theme'=>'monokai',
@@ -119,7 +119,7 @@ class Type{
 
 		$types['css'] = array(
 			'label' => 'Feuille CSS',
-			'extension' => 'css',
+			'extension' => array('css'),
 			'codemirror' => array(
 				'mode'=>'css',
 				'theme'=>'monokai',
@@ -129,7 +129,7 @@ class Type{
 		);
 		$types['javascript'] = array(
 			'label' => 'Source Javascript',
-			'extension' => 'js',
+			'extension' => array('js'),
 			'codemirror' => array(
 				'mode'=>'javascript',
 				'theme'=>'monokai',
@@ -140,7 +140,7 @@ class Type{
 
 		$types['json'] = array(
 			'label' => 'Source JSON',
-			'extension' => 'json',
+			'extension' => array('json'),
 			'codemirror' => array(
 				'mode'=>'javascript',
 				'theme'=>'monokai',
@@ -156,7 +156,7 @@ class Type{
 				'element' => '#resource p img:eq(0)',
 				'callback' => '$(\'#resource img:eq(0)\').attr(\'src\',r.url);'
 			),
-			'extension' => 'jpg'
+			'extension' => array('jpg','jpeg','png','bmp','gif','svg')
 		);
 		
 		$types['files'] = array(
@@ -166,12 +166,12 @@ class Type{
 				'element' => '#dropZoneFiles',
 				'callback' => "search_file();",
 			),
-			'extension' => 'zip'
+			'extension' => array('zip')
 		);
 
 		$types['part'] = array(
 			'label' => 'Set de composants',
-			'extension' => 'part'
+			'extension' => array('part')
 		);
 
 		
@@ -214,8 +214,8 @@ class Type{
 				}
 			break;
 			case 'image':
-				
 				$resource->save();
+				$ext = getExt($resource->label);
 				$name = $resource->id.'.'.$ext;
 				file_put_contents(SKETCH_PATH.$name,$stream);
 				$resource->content = $name;
@@ -301,6 +301,7 @@ class Type{
 				$resource->content = '';
 				$resource->save();
 			break;
+			
 			default:
 			break;
 		}
@@ -429,7 +430,7 @@ class Type{
 	public static function toFileStream($resource){
 		$type = self::get($resource->type);
 		$file = (object) array('name'=>slugify($resource->label),'content'=>'');
-		if(isset($type['extension'])) $file->name .= '.'.$type['extension'];
+		if(isset($type['extension'])) $file->name .= '.'.$type['extension'][0];
 		switch($resource->type){
 			case 'part':
 				$file->content = '> '.strtoupper($resource->label).PHP_EOL;

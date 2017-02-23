@@ -25,7 +25,7 @@ class Resource extends Entity
     public function remove()
     {
         self::deleteById($this->id);
-        if ($this->type == 'image' && file_exists(SKETCH_PATH.$this->content)) {
+        if ($this->type == 'image' && file_exists(SKETCH_PATH.$this->content) && is_file(SKETCH_PATH.$this->content) ) {
             unlink(SKETCH_PATH.$this->content);
         }
     }
