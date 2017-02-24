@@ -165,6 +165,8 @@ switch ($_['action']){
 			$sketchs = Sketch::loadAll($filters);
 			foreach($sketchs as $sketch){
 				$sketch->label = html_entity_decode($sketch->label);
+				$sketch->owner = User::getById($sketch->owner)->login;
+				$sketch->public = $sketch->public==1?true:false;
 				$response['rows'][] = $sketch->toArray();
 			}
 		});
@@ -289,7 +291,8 @@ switch ($_['action']){
 			foreach($resources as $resource){
 				$resource->label = html_entity_decode($resource->label);
 				$resource->content = null;
-				$response['rows'][] = $resource->toArray();
+				$resource = $resource->toArray();
+				$response['rows'][] = $resource;
 			}
 				
 		});

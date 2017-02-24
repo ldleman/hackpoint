@@ -4,7 +4,7 @@
 
 			<div class="jumbotron" id="sketchBlock">
 			<div class="jumbotron-contents">
-				<h2>Sketch(s)</h2>
+				<h2><i class="fa fa-inbox"></i> Sketch(s)</h2>
 				
 				<?php if ($myUser->connected()): ?>
 				<div class="btn-group">
@@ -26,6 +26,8 @@
 						<tr>
 							<th>#</th>
 							<th>Libellé</th>
+							<th>Propriétaire</th>
+							<th>Visibilité</th>
 							<th style="width:100px;">Options</th>
 						</tr>
 					</thead>
@@ -33,8 +35,10 @@
 						<tr data-id="{{id}}" style="display:none;">
 							<td><a href="sketch.php?id={{id}}">{{id}}</a></td>
 							<td><a href="sketch.php?id={{id}}">{{label}}</a></td>
+							<td>{{owner}}</td>
+							<td>{{#public}}<i class="fa fa-eye"></i> Publique{{/public}}{{^public}}<i class="fa fa-eye-slash"></i> Privé{{/public}}</td>
 							<td>
-								<div onclick="delete_sketch(this);" class="btn btn-danger"><i class="fa fa-times"></i></div>
+								<div onclick="delete_sketch(this);" class="btn btn-danger btn-mini btn-rounded pulse"><i class="fa fa-times"></i></div>
 							</td>
 						</tr>
 					</tbody>

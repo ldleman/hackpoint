@@ -55,7 +55,7 @@ display:none;
 	cursor:pointer;
 }
 
-#sketchBlock h2{
+#sketchBlock h2,#componentBlock h2{
 	margin:0 10px 0 0;
 	display:inline-block;
 	vertical-align:top;
@@ -94,6 +94,7 @@ div.CodeMirror{
 #sketchTitle{
 	margin-bottom:0;
 }
+
 #sketchTitle input{
 	border:none;
 	border-bottom: 1px solid #cecece;
@@ -174,6 +175,9 @@ div.CodeMirror{
 
 #resource{
 	transition:all 0.5s linear;
+}
+#sketchs{
+	margin-bottom:0;
 }
 #sketchs.table tbody tr td{
 	vertical-align:middle;
@@ -262,7 +266,18 @@ div.CodeMirror{
 	margin:10% auto;
 }
 
-
+.pulse:hover {
+    -webkit-animation: pop-in 0.3s;
+    -moz-animation: pop-in 0.3s;
+    -ms-animation: pop-in 0.3s;
+}
+.btn.btn-rounded {
+    border-radius: 40px;
+}
+.btn-mini {
+    padding: 0 4px;
+    border-radius: 4px;
+}
 
 .dz-preview{
 	display:none;
@@ -279,4 +294,22 @@ div.CodeMirror{
 a.navbar-brand {
     padding-left: 45px;
     background: url('../img/icon.png') no-repeat 5px center !important;
+}
+
+/* ANIMATIONS */
+
+@-webkit-keyframes pop-in {
+0% {  -webkit-transform: scale(1); }
+50% {  -webkit-transform: scale(1.3); }
+100% {  -webkit-transform: scale(1); }
+}
+@-moz-keyframes pop-in {
+0% {  -moz-transform: scale(1); }
+50% {  -moz-transform: scale(1.3); }
+100% {  -moz-transform: scale(1); }
+}
+@keyframes pop-in {
+0% {  transform: scale(1); }
+50% {  transform: scale(1.3); }
+100% { transform: scale(1); }
 }

@@ -2,9 +2,9 @@
 
 	<?php if($myUser->connected()): ?>
 
-			<div class="jumbotron">
+			<div class="jumbotron" id="componentBlock">
 			<div class="jumbotron-contents">
-				<h2>Mes composants</h2>
+				<h2><i class="fa fa-qrcode"></i> Mes composants</h2>
 				<a  onclick="edit_component();" class="btn btn-success"><i class="fa fa-plus"></i> Ajouter</a>
 				<table class="table table-striped table-hover" id="components">
 					<thead>
@@ -25,8 +25,8 @@
 							<td>{{brand}}</td>
 							<td>{{price}}</td>
 							<td>
-								<div onclick="edit_component(this);" class="btn btn-primary"><i class="fa fa-pencil"></i></div>
-								<div onclick="delete_component(this);" class="btn btn-danger"><i class="fa fa-times"></i></div>
+								<div onclick="edit_component(this);" class="btn btn-primary btn-mini btn-rounded pulse"><i class="fa fa-pencil"></i></div>
+								<div onclick="delete_component(this);" class="btn btn-danger btn-mini btn-rounded pulse"><i class="fa fa-times"></i></div>
 							</td>
 						</tr>
 					</tbody>
