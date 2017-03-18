@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 require_once __DIR__.DIRECTORY_SEPARATOR."common.php";
 
@@ -162,7 +162,7 @@ switch ($_['action']){
 				$filters = array('owner'=>$myUser->id);
 			}
 			
-			$sketchs = Sketch::loadAll($filters);
+			$sketchs = Sketch::loadAll($filters, "label ASC");
 			foreach($sketchs as $sketch){
 				$sketch->label = html_entity_decode($sketch->label);
 				$sketch->owner = User::getById($sketch->owner)->login;
@@ -280,13 +280,11 @@ switch ($_['action']){
 		});
 	break;
 	
-	case 'search_resources':
-	    
-		
+	case 'search_resources':		
 		Action::write(function($_,&$response){
 			
 			if(!isset($_['id']) || !is_numeric($_['id'])) throw new Exception("Sketch non spécifié");
-			$resources = Resource::loadAll(array('sketch'=>$_['id']),'sort');
+			$resources = Resource::loadAll(array('sketch'=>$_['id']),'sort ASC, label ASC');
 			
 			foreach($resources as $resource){
 				$resource->label = html_entity_decode($resource->label);
