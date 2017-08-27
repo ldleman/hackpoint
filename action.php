@@ -433,6 +433,7 @@ switch ($_['action']){
 	
 	case 'get_resource_file':
 		global $myUser;
+		ob_end_clean();
 		$resource = Resource::getById($_['id']);
 		$sketch =$resource->sketch_object;
 		if($myUser->id != $sketch->owner && !$sketch->public){
@@ -459,7 +460,7 @@ switch ($_['action']){
 	
 	case 'get_resource_image':
 		global $myUser;
-		
+		ob_end_clean();
 		$resource = Resource::getById($_['id']);
 		$sketch =$resource->sketch_object;
 		if($myUser->id != $sketch->owner && !$sketch->public){
@@ -469,8 +470,11 @@ switch ($_['action']){
 		$finfo = finfo_open(FILEINFO_MIME_TYPE);
 		$filepath = SKETCH_PATH.$resource->content;
 		$mime = finfo_file($finfo, $filepath);
+		
 		header('Content-Type: '.$mime);
-		readfile($filepath);
+		echo file_get_contents($filepath);
+		finfo_close($finfo);
+		exit();
 	break;
 	
 	case 'edit_resource':
