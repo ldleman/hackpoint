@@ -23,6 +23,7 @@ class Type{
 			'label' => 'README',
 			'extension' => array('md'),
 			'codemirror' => array(
+				'mode'=>'markdown',
 				'smartIndent' => false,
 				'readOnly' =>  false
 			)
