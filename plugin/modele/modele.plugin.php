@@ -14,13 +14,10 @@ function test_plugin_menu(&$menuItems){
 
 
 
-
-
 //Cette fonction va generer une page quand on clique sur Modele dans menu
 function test_plugin_page(){
 	global $_;
 	if(!isset($_['module']) || $_['module']!='modele') return;
-	require_once('Voiture.class.php');
 	?>
 	<h3>Mon plugin</h3>
 	<h5>Plugins d'exemple</h5>
@@ -30,20 +27,10 @@ function test_plugin_page(){
 
 function test_plugin_install($id){
 	if($id != 'fr.idleman.modele') return;
-	require_once('Voiture.class.php');
-	//Création de la table voiture
-	Voiture::create();
-	//Création d'une voiture d'exemple
-	$pixo = new Voiture();
-	$pixo->marque = "Nissan Pixo";
-	$pixo->vitesse = 110;
-	$pixo->save();
 	// en cas d'erreur : throw new Exception('Mon erreur');
 }
 function test_plugin_uninstall($id){
 	if($id != 'fr.idleman.modele') return;
-	require_once('Voiture.class.php');
-	Voiture::drop();
 	// en cas d'erreur : throw new Exception('Mon erreur');
 }
 
@@ -54,38 +41,9 @@ function test_plugin_section(&$sections){
 
 //cette fonction comprends toutes les actions du plugin qui ne nécessitent pas de vue html
 function test_plugin_action(){
-	global $_,$conf;
-	switch($_['action']){
-		case 'test_widget_load':
-			$widget = Widget::getById($_['id']);
-			$widget->title = 'Au commencement, il y avait yana';
-			echo json_encode($widget);
-		break;
-	}
+	require_once('action.php');
 }
 
-
-
-function test_plugin_widget_refresh(&$widgets){
-	$widget = Widget::getById(1);
-	$widget->title = 'Hello widget !';
-	$widget->icon = 'fa-user';
-	$widget->content = 'Dernier rafraichissement : '.date('d/m/Y H:i:s');
-	$widgets[] = $widget ;
-}
-
-function test_plugin_widget(&$widgets){
-	$modelWidget = new Widget();
-	$modelWidget->model = 'test';
-	$modelWidget->title = 'Horloge';
-	$modelWidget->icon = 'fa-caret-right';
-	$modelWidget->background = '#50597b';
-	$modelWidget->load = 'action.php?action=test_widget_load';
-	$modelWidget->delete = 'action.php?action=test_widget_delete';
-	$modelWidget->js = [Plugin::url().'/main.js'];
-	$modelWidget->css = [Plugin::url().'/main.css'];
-	$widgets[] = $modelWidget;
-}
 
 Plugin::addCss("/main.css"); 
 Plugin::addJs("/main.js"); 
