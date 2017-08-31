@@ -32,7 +32,7 @@ class Type{
 			'label' => 'Source Arduino',
 			'extension' => array('ino'),
 			'codemirror' => array(
-				'mode'=>'clike',
+				'mode'=>'text/x-carduino',
 				'theme'=>'monokai',
 				'lineNumbers' => true,
 				'readOnly' =>  false

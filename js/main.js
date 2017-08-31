@@ -328,8 +328,9 @@ function load_resource(){
 		}
 
 		if(r.code != null){
-			var editor = CodeMirror.fromTextArea($('#resource p textarea').get(0),r.code);
 
+			var editor = CodeMirror.fromTextArea($('#resource > p > textarea:eq(0)').get(0),r.code);
+			console.log(editor);
 
 			editor.on("change", function() { 
 				var data ={height:800};

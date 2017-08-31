@@ -6,6 +6,37 @@
 			<div class="jumbotron-contents">
 				<h2><i class="fa fa-inbox"></i> Sketch(s)</h2>
 				
+				<textarea>
+					
+					void setup() {
+  Serial.begin(9600); 
+  pinMode(PRESENCE_PIN, INPUT);    
+  pinMode(LIGHT_PIN, INPUT);
+  pinMode(SOUND_PIN, INPUT);
+  pinMode(LED_PIN, OUTPUT);
+  digitalWrite(LED_PIN,LOW);
+  Serial.println("Demarrage de P.R.O.P.I.S.E");
+  delay(3000);
+  digitalWrite(LED_PIN,HIGH);
+  Serial.println("Rruuullleez !");
+}
+
+				</textarea>
+ <script>
+      /*var cEditor = CodeMirror.fromTextArea(document.getElementById("c-code"), {
+        lineNumbers: true,
+        matchBrackets: true,
+        mode: "text/x-csrc"
+      });
+     
+      var ceylonEditor = CodeMirror.fromTextArea(document.getElementById("ceylon-code"), {
+          lineNumbers: true,
+          matchBrackets: true,
+          mode: "text/x-ceylon"
+      });
+      var mac = CodeMirror.keyMap.default == CodeMirror.keyMap.macDefault;
+      CodeMirror.keyMap.default[(mac ? "Cmd" : "Ctrl") + "-Space"] = "autocomplete";*/
+    </script>
 				<?php if ($myUser->connected()): ?>
 				<div class="btn-group">
 				  <button class="btn btn-success" type="button" data-toggle="modal" data-target="#editSketch">Ajouter</button>
