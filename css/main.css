@@ -297,6 +297,18 @@ a.navbar-brand {
     background: url('../img/icon.png') no-repeat 5px center !important;
 }
 
+.pointer{
+	cursor:pointer;
+}
+.right{
+	float:right;
+}
+.left{
+	float:left;
+}
+.clear{
+	clear:both;
+}
 /* ANIMATIONS */
 
 @-webkit-keyframes pop-in {

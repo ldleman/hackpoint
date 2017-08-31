@@ -272,7 +272,11 @@ $.fn.extend({
 					container.find(childName+':visible:not(.nofill)').remove();
 				}
 				var tpl = model.get(0).outerHTML;
-				
+
+				//fix jquery backslahes break
+				tpl = tpl.replace(/{{##/g,'{{/').replace(/{{\/(.*)}}=""/g,'{{/$1}}');
+				//fix images url not found on template
+				tpl = tpl.replace(/(<img\s[^>]*\s)(data-src)/g,'$1src');
 				$.action(option,function(r){
 					for(var key in r.rows){
 						var line = $(Mustache.render(tpl,r.rows[key]));

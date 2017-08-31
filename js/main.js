@@ -24,7 +24,24 @@ $(document).ready(function(){
 
 });
 
-
+function init_plugin(){
+	search_plugin(function(){
+			$('.toggle').change(function(){
+				var input = $('input',this);
+				var value = input.prop('checked');
+				
+				$.action({
+					action : 'change_plugin_state',
+					plugin : $(this).closest('li').attr('data-id'),
+					state:value?1:0
+				},function(r){},
+				function(r){
+						input.prop('checked',!value);
+				});
+				
+			});
+		});
+}
 
 function init_index(){
 	search_sketch();
@@ -103,6 +120,17 @@ function init_component(){
 	
 };
 
+/*PLUGINS*/
+
+// SEARCH
+function search_plugin(callback){
+	$('#plugins').fill({action:'search_plugin'},function(){
+		if(callback!=null) callback();
+	});
+}
+
+
+/*COMPONENTS*/
 function save_component(){
 	var data = $.getForm('#editComponent');
 	

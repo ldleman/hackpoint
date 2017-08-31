@@ -19,8 +19,11 @@
     $myUser = new User();
     $conf = new Configuration();
     $conf->getAll();
-    $page = basename($_SERVER['PHP_SELF']);
+    $page = basename($_SERVER['PHP_SELF']).(isset($_SERVER['QUERY_STRING'])?'?'.$_SERVER['QUERY_STRING']:'');
+
+  
 
     if (isset($_SESSION['currentUser'])) {
         $myUser =unserialize($_SESSION['currentUser']);
     }
+    Plugin::includeAll();

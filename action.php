@@ -314,6 +314,41 @@ switch ($_['action']){
 		Type::fromFileImport($_FILES['file'],$sketch,$type);
 		
 	break;
+
+	// PLUGINS
+	case 'search_plugin':
+	Action::write(function($_,&$response){
+		global $myUser;
+		if( $myUser->rank != 'ADMIN' ) throw new Exception("Permissions insuffisantes");
+		foreach(Plugin::getAll() as $plugin){
+			$plugin->folder = array('name'=>$plugin->folder,'path'=>$plugin->path());
+			$response['rows'][] = $plugin;
+		}
+		
+	});
+	break;
+	
+	case 'change_plugin_state':
+	Action::write(function($_,&$response){
+		global $myUser;
+		if( $myUser->rank != 'ADMIN' ) throw new Exception("Permissions insuffisantes");
+		
+		$plugin = Plugin::getById($_['plugin']);
+		
+		if($_['state']){
+			$states = Plugin::states();
+			$missingRequire = array();
+			foreach($plugin->require as $require=>$version):
+				$req = Plugin::getById($require);
+			if($req == null || $req==false || !$req->state || $req->version!=$version)
+				$missingRequire[]= $require.' - '.$version;
+			endforeach;
+			if(count($missingRequire)!=0) throw new Exception("Plugins pré-requis non installés : ".implode(',',$missingRequire));
+		}
+		
+		Plugin::state($_['plugin'],$_['state']);
+	});
+	break;
 	
 	//COMPONENT
 
@@ -632,7 +667,7 @@ switch ($_['action']){
 	break;
 	
 	default:
-		
+		Plugin::callHook("action");  
 	break;
 }
 

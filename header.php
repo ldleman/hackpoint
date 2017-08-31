@@ -1,5 +1,32 @@
 <?php 
 require_once __DIR__.DIRECTORY_SEPARATOR.'common.php';
+
+
+Plugin::addHook("page", function(){
+	global $_;
+	if(isset($_['module'])) return;
+	require_once('dashboard.php');
+}); 
+
+Plugin::addHook("menu_main", function(&$menuItems){
+	global $_,$myUser;
+	$menuItems[] = array(
+	'sort'=>0,
+	'url'=>'index.php',
+	'label'=>'Sketch',
+	'icon'=>'codepen'
+	);
+
+	if (! $myUser->connected()) return;
+	$menuItems[] = array(
+	'sort'=>1,
+	'url'=>'component.php',
+	'label'=>'Composants',
+	'icon'=>'codepen'
+	);
+}); 
+
+
 ?>
 <!doctype html>
 <html class="no-js" lang="">
@@ -40,10 +67,23 @@ require_once __DIR__.DIRECTORY_SEPARATOR.'common.php';
 					
 					<div id="bs-example-navbar-collapse-5" class="collapse navbar-collapse">
                       <ul class="nav navbar-nav">
-                        <li <?php echo $page=='index.php'?'class="active"':''; ?>><a href="index.php">Sketch</a></li>
-                        <?php if ($myUser->connected()): ?>
-						<li <?php echo $page=='component.php'?'class="active"':''; ?>><a href="component.php">Composants</a></li>
-						<?php endif; ?>
+                       
+
+						<?php 
+						$menuItems = array();
+						Plugin::callHook("menu_main",array(&$menuItems)); 
+						
+						usort($menuItems, function($a, $b){
+							if ($a['sort'] == $b['sort']) {
+						        return 0;
+						    }
+						    return ($a['sort'] < $b['sort']) ? -1 : 1;
+						});
+
+						foreach($menuItems as $item):
+						?>
+						<li <?php echo $page==$item['url']?'class="active"':''; ?>><a href="<?php echo $item['url'];?>"><?php echo $item['label'];?></a></li>
+						<?php endforeach; ?>
                       </ul>
                       <ul class="nav navbar-nav navbar-right">
 					  
@@ -61,8 +101,10 @@ require_once __DIR__.DIRECTORY_SEPARATOR.'common.php';
                         <li class="dropdown <?php echo $page=='account.php'?'active':''; ?>" >
                           <a data-toggle="dropdown" class="dropdown-toggle" href="#"> Connecté en tant que <?php echo $myUser->login; ?> <b class="caret"></b></a>
                           <ul role="menu" class="dropdown-menu">
-                            <li class="dropdown-header">Profil</li>
-                            <li ><a href="account.php">Modifier</a></li>
+                            <li class="dropdown-header">Préférences</li>
+                            <li ><a href="plugin.php">Plugins</a></li>
+                            <li ><a href="account.php">Profil</a></li>
+                            
                             <li class="divider"></li>
                             <li><a href="action.php?action=logout">Déconnexion</a></li>
                           </ul>
