@@ -45,6 +45,7 @@ class Action
         } catch (Exception $e) {
             $response['errors'][] = $e->getMessage();
         }
+        
         echo json_encode($response);
         restore_error_handler();
     }

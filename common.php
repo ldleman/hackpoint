@@ -27,3 +27,23 @@
         $myUser =unserialize($_SESSION['currentUser']);
     }
     Plugin::includeAll();
+
+    Plugin::addHook('resource_type',function(&$types){
+        $types['readme'] = __DIR__.SLASH.'type'.SLASH.'Readme.class.php';
+        $types['arduino'] = __DIR__.SLASH.'type'.SLASH.'Arduino.class.php';
+        $types['c'] = __DIR__.SLASH.'type'.SLASH.'Arduino.class.php';
+        $types['shell'] = __DIR__.SLASH.'type'.SLASH.'C.class.php';
+        $types['php'] = __DIR__.SLASH.'type'.SLASH.'Php.class.php';
+        $types['xml'] = __DIR__.SLASH.'type'.SLASH.'Xml.class.php';
+        $types['python'] = __DIR__.SLASH.'type'.SLASH.'Python.class.php';
+        $types['java'] = __DIR__.SLASH.'type'.SLASH.'Java.class.php';
+        $types['css'] = __DIR__.SLASH.'type'.SLASH.'Css.class.php';
+        $types['javascript'] = __DIR__.SLASH.'type'.SLASH.'Javascript.class.php';
+        $types['json'] = __DIR__.SLASH.'type'.SLASH.'Json.class.php';
+        $types['image'] = __DIR__.SLASH.'type'.SLASH.'Image.class.php';
+        $types['files'] = __DIR__.SLASH.'type'.SLASH.'File.class.php';
+        $types['part'] = __DIR__.SLASH.'type'.SLASH.'PartType.class.php';
+    });
+    
+
+?>

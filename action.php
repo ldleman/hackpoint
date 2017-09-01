@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 require_once __DIR__.DIRECTORY_SEPARATOR."common.php";
 
@@ -84,18 +84,24 @@ switch ($_['action']){
 			$response['sketch'] = $sketch->toArray();
 			$response['resources'] = array();
 			
-			foreach(Resource::loadAll(array('sketch'=>$_['id'])) as $resource)
-				$response['resources'][] = Type::toExport($resource);
+			$types = ResourceType::all();
+			foreach(Resource::loadAll(array('sketch'=>$_['id'])) as $resource){
+				$type = $types[$resource->type];
+				$response['resources'][] = $type['class']::toJson($resource);
+			}
 
 		
 		}catch(Exception $e){
 			$response['error'] = $e->getMessage();
 		}
-	
+		
+
 		$response = gzdeflate(json_encode($response));
+		
 		
 		if(!isset($_['api'])){
 			$filename = slugify($sketch->label).('.export.').date('d-m-Y_H-i').'.json';
+			ob_end_clean();
 			header("Content-Type: application/json");
 			header("Content-Length: " . strlen($response));
 			header('Expires: Sun, 01 Jan 2014 00:00:00 GMT');
@@ -130,6 +136,7 @@ switch ($_['action']){
 			$stream = false;
 			try{ $stream = @file_get_contents($contentPath); }catch(Exception $a){}
 			if($stream === false) throw new Exception("Impossible d'atteindre le contenu hackpoint : $contentPath ");
+			
 			$stream = gzinflate($stream);
 			if($stream === false) throw new Exception('Impossible de décompresser le sketch...');
 			$json = json_decode($stream,true);
@@ -147,9 +154,17 @@ switch ($_['action']){
 			$sketch->save();
 			
 			
-			
-			foreach($json['resources'] as $res)
-				Type::fromImport($res,$sketch);
+			$types = ResourceType::all();
+			foreach($json['resources'] as $res){
+				$resource = new Resource();
+				$resource->fromArray($res);
+				$resource->id = null;
+				$resource->sketch = $sketch->id;
+				$type = $types[$resource->type];
+				
+				$resource = $type['class']::fromJson($resource);
+				$resource->save();
+			}
 
 		});
 	break;
@@ -206,21 +221,25 @@ switch ($_['action']){
 
 	case 'download_sketch':
 
+
 		$sketch = Sketch::getByid($_['id']);
 		$resources = Resource::loadAll(array('sketch'=>$sketch->id),'sort');
 		
 		$filename = $sketch->slug.'-'.time().'.zip';
 		$filepath = sys_get_temp_dir().DIRECTORY_SEPARATOR.$filename;
 		$zip = new ZipArchive;
+
 		$res = $zip->open($filepath, ZipArchive::CREATE);
 		if ($res === TRUE) {
 			foreach($resources as $resource){
-				$type = Type::get($resource->type);
-				$file = Type::toFileStream($resource);
-				$zip->addFromString($file->name, $file->content);
+				$type = ResourceType::all($resource->type);
+				$file = $type['class']::toFile($resource);
+
+				$zip->addFromString($file['name'], $file['content']);
 			}
 			$zip->close();
 		}
+		ob_end_clean();
 		header("Content-Type: application/zip");
 		header("Content-Length: " . filesize($filepath));
 		header('Expires: Sun, 01 Jan 2014 00:00:00 GMT');
@@ -250,12 +269,10 @@ switch ($_['action']){
 			
 			$resource->content = $name;
 			$resource->save();
-			$response = array_merge(Type::get($resource->type));
-			//$response['url'] = $path.'?v='.time();
-			
+
+			$response = array_merge(ResourceType::all($resource->type));
 			$response['url'] ="action.php?action=get_resource_image&id=".$resource->id."&v=".time();
-			
-			
+		
 		});
 	break;
 	
@@ -275,7 +292,7 @@ switch ($_['action']){
 			$path = $folder.'/'.$_FILES['file']['name'];
 			
 			move_uploaded_file($_FILES['file']['tmp_name'], $path);
-			$response = array_merge(Type::get($resource->type));
+			$response = array_merge(ResourceType::all($resource->type));
 			$response['url'] = $path.'?v='.time();
 		});
 	break;
@@ -302,16 +319,21 @@ switch ($_['action']){
 		if($myUser->id != $sketch->owner) return;
 		$ext = explode('.',$_FILES['file']['name']);
 		$ext = strtolower(array_pop($ext));
-		$types = Type::all();
-		$type = 'readme';
+		$types = ResourceType::all();
+		$type = ResourceType::all('readme');
 		foreach($types as $uid=>$tp){
-			if(!isset($tp['extension'])) continue;
-			foreach($tp['extension'] as $ext2){
-				if($ext == $ext2) $type = $uid;
-			}
-			
+			if(!isset($tp['fromExtension'])) continue;
+			if(in_array($ext, $tp['fromExtension'])) $type = $tp;
 		}
-		Type::fromFileImport($_FILES['file'],$sketch,$type);
+	
+		$resource = new Resource();
+		$resource->sketch = $sketch->id;
+		$stream = file_get_contents($_FILES['file']['tmp_name']);
+		$resource->label = $_FILES['file']['name'];
+		$resource->type = $type['uid'];
+		$resource->content = $stream;
+		$resource = $type['class']::fromFile($resource,$sketch);
+		$resource->save();
 		
 	break;
 
@@ -514,12 +536,20 @@ switch ($_['action']){
 	
 	case 'edit_resource':
 		Action::write(function($_,&$response){
-		
+			if(!isset($_['id']) ||  empty($_['id']) || $_['id']==0) return;
 			$resource = Resource::getById($_['id']);
+			if(!$resource) return;
 			global $myUser;
 			$sketch = Sketch::getById($resource->sketch);
 			$resource->label = html_entity_decode($resource->label);
-			$response = Type::toHtml($resource,$sketch);
+			$response = $resource->toArray();
+
+			$type = ResourceType::all($resource->type);
+			$response = array_merge($response,$type['class']::toHtml($resource,$sketch));
+			if(isset($response['codemirror'])) $response['code'] = $response['codemirror'];
+			if($myUser->id != $sketch->owner) $response['code']['readOnly'] = true;
+	
+			
 		});
 	break;
 	case 'delete_resource':
@@ -577,7 +607,7 @@ switch ($_['action']){
 				
 				$zip->close();
 			}
-		
+			ob_end_clean();
 			header("Content-Type: application/zip");
 			header("Content-Length: " . filesize($filepath));
 			header('Expires: Sun, 01 Jan 2014 00:00:00 GMT');

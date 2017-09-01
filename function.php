@@ -4,7 +4,10 @@ function secondToTime($seconds) {
   return sprintf('%02d:%02d:%02d', ($t/3600),($t/60%60), $t%60);
 }
 function app_autoloader($class_name) {
-		require_once('class/'.$class_name.'.class.php');
+	if(file_exists(__DIR__.'/class/'.$class_name.'.class.php'))
+		require_once(__DIR__.'/class/'.$class_name.'.class.php');
+	if(file_exists(__DIR__.'/type/'.$class_name.'.class.php'))
+		require_once(__DIR__.'/type/'.$class_name.'.class.php');
 }
 function errorToException( $errno, $errstr, $errfile, $errline, $errcontext)
 {
@@ -179,9 +182,5 @@ function imageResize($image,$w,$h){
 	imagedestroy($resource);
 	imagejpeg($thumbnail , $image, 100);
 }
-
-
-
-
 
 ?>

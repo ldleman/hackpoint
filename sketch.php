@@ -12,6 +12,8 @@ try {
         throw new Exception("Sketch privé, demandez à son propriétaire de le rendre publique");
     }
 
+    $types = ResourceType::all();
+    
     ?>
 <div class="row" id="sketch" data-id="<?php echo $sketch->id;
     ?>">
@@ -46,9 +48,11 @@ try {
 					<span class="sr-only">Toggle Dropdown</span>
 				  </button>
 				  <ul class="dropdown-menu" role="menu">
-					<?php foreach (Type::all() as $uid=>$type): ?>
+					<?php foreach ($types as $uid=>$type): ?>
 					<li><a onclick="add_resource('<?php echo $uid;
-    ?>');"><?php echo $type['label'];
+    ?>');"><?php 
+          require_once($type['file']);
+          echo $type['label'];
     ?></a></li>
 					<?php endforeach;
     ?>
@@ -97,7 +101,7 @@ try {
       <div class="modal-body">
 	  <label for="type">Type</label>
        <select class="form-control" id="type">
-       	<?php foreach (Type::all() as $uid=>$type): ?>
+       	<?php foreach ($types as $uid=>$type): ?>
        	<option value="<?php echo $uid;
     ?>"><?php echo $type['label'];
     ?></option>
@@ -144,7 +148,8 @@ try {
 
 <?php 
 } catch (Exception $e) {
+
     $_SESSION['error'] = $e->getMessage();
-    header('location: index.php');
+    echo $_SESSION['error'];
 }
 require_once __ROOT__.'footer.php' ?>

@@ -106,6 +106,21 @@ Plugin::addHook("menu_main", function(&$menuItems){
                             <li ><a href="account.php">Profil</a></li>
                             
                             <li class="divider"></li>
+                            <?php 
+						$menuItems = array();
+						Plugin::callHook("menu_setting",array(&$menuItems)); 
+						
+						usort($menuItems, function($a, $b){
+							if ($a['sort'] == $b['sort']) {
+						        return 0;
+						    }
+						    return ($a['sort'] < $b['sort']) ? -1 : 1;
+						});
+
+						foreach($menuItems as $item): ?>
+								<li><a href="<?php echo $item['url'];?>"><?php echo $item['label'];?></a></li>
+							<?php endforeach;?>
+
                             <li><a href="action.php?action=logout">Déconnexion</a></li>
                           </ul>
                         </li>

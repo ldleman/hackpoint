@@ -69,11 +69,21 @@ try {
 	//Class entities
 	Entity::install(__ROOT__.'class');
 
+
+
     $admin = new User();
     $admin->login = 'admin';
     $admin->password = User::password_encrypt('admin');
     $admin->rank = 'ADMIN';
     $admin->save();
+
+    foreach(array('readme','arduino') as $rt){
+       $resourceType = new ResourceType();
+       $resourceType->user = $admin->login;
+       $resourceType->type = $rt;
+       $resourceType->save();
+    }
+
     ?>
 
 <div class="alert alert-success alert-dismissable">
