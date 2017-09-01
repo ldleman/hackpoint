@@ -1,0 +1,9 @@
+{
+	"id": "fr.idleman.fritzing",
+	"name": "Fritzing",
+	"version": "1.0",
+	"url": "http://blog.idleman.fr",
+	"licence": {"name": "MIT","url" : "http://choosealicense.com/licenses/mit/"},
+	"description": "Ajout des types de ressources fritzing",
+	"require" : {}
+}
