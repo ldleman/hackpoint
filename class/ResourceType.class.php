@@ -1,6 +1,6 @@
 <?php
 
-class ResourceType{
+class ResourceType extends Entity{
 	
 	public $user,$type;
 	protected $fields =
