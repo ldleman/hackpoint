@@ -31,8 +31,8 @@
     Plugin::addHook('resource_type',function(&$types){
         $types['readme'] = __DIR__.SLASH.'type'.SLASH.'Readme.class.php';
         $types['arduino'] = __DIR__.SLASH.'type'.SLASH.'Arduino.class.php';
-        $types['c'] = __DIR__.SLASH.'type'.SLASH.'Arduino.class.php';
-        $types['shell'] = __DIR__.SLASH.'type'.SLASH.'C.class.php';
+        $types['c'] = __DIR__.SLASH.'type'.SLASH.'C.class.php';
+        $types['shell'] = __DIR__.SLASH.'type'.SLASH.'Shell.class.php';
         $types['php'] = __DIR__.SLASH.'type'.SLASH.'Php.class.php';
         $types['xml'] = __DIR__.SLASH.'type'.SLASH.'Xml.class.php';
         $types['python'] = __DIR__.SLASH.'type'.SLASH.'Python.class.php';
