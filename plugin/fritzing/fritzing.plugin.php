@@ -23,7 +23,7 @@ function fritzing_plugin_uninstall($id){
 
 //cette fonction comprends toutes les actions du plugin qui ne nécessitent pas de vue html
 function fritzing_plugin_action(){
-	require_once('action.php');
+	require_once(__DIR__.SLASH.'action.php');
 }
 
 

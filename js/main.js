@@ -341,7 +341,7 @@ function load_resource(){
 				var data = {};
 				data.url = r.upload.url;
 				data.success = function(useless,r){
-					if(r.errors.length!=0){
+					if(r.errors && r.errors.length!=0){
 						alert('Erreur : '+r.errors.join(','));
 					}else{
 						eval(r.upload.callback);

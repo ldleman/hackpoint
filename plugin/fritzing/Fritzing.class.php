@@ -6,7 +6,7 @@ class Fritzing{
 	private $coreIndicator = '/fritzing-parts/';
 	private $minY,$minX;
 	public $ino ;
-	public $comment ;
+	public $debug ;
 	function __construct($file){
 		$this->file = $file;
 
@@ -63,7 +63,7 @@ class Fritzing{
 
 				if(isset($instance->views->breadboardView->geometry->transform)){
 					$part['geometry']['r'] = $instance->views->breadboardView->geometry->transform;
-					$this->comment = json_encode($instance->views->breadboardView->geometry->transform->attributes());
+					$this->debug = json_encode($instance->views->breadboardView->geometry->transform->attributes());
 				}
 
 				if(isset($geometry['wireFlags']))
@@ -96,15 +96,7 @@ class Fritzing{
 		}
 		$this->minY = abs($this->minY);
 		$this->minX = abs($this->minX);
-		$this->comment = '<h1>Composants</h1><ul>';
-		foreach ($this->parts as $part) {
-			if($part['type'] == 'component' && isset($part['component']['name'])){
-				
-				$this->comment .= '<li>'.$part['sigle'].' : '. $part['component']['name'].' ('. $part['component']['description'].')</li>';
-				
-			}
-		}
-		$this->comment .= '</ul>';
+		
 		
 	}
 
@@ -143,13 +135,17 @@ class Fritzing{
 					$x = 0;
 					$y = 0;
 				$html .= '.attr("points","';
+					$points = array();
 					for ($i=0;$i<count($part['geometry']['x']);$i++) {
 						$x += $part['geometry']['x'][$i];
 						$y += $part['geometry']['y'][$i];
 						if($i==0) $y+= $this->minY;
 						if($i==0) $x+= $this->minX;
-						$html .= "$x,$y,";
+						//$html .= "$x,$y,";
+						$points[] = $x;
+						$points[] = $y;
 					}
+					$html .= implode(',', $points);
 					$html .= '");';
 			   } 
 			

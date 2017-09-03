@@ -1,3 +1,3 @@
 function refresh_fritzing(){
-	window.reload();
+	location.reload();
 }

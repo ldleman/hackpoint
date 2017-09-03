@@ -9,7 +9,7 @@ class FritzingType {
 			'fromExtension' => array('fzz'),
 			'toExtension' => 'fzz',
 			'upload' => array(
-				'url'     => 'action.php?action=upload_resource_file',
+				'url'     => 'action.php?action=fritzing_upload_resource',
 				'element' => '#dropZoneFiles',
 				'callback' => "refresh_fritzing();",
 			)
@@ -57,35 +57,41 @@ class FritzingType {
 		$infos = self::manifest();
 		require_once(__DIR__.SLASH."Fritzing.class.php");
 
-
-		if(!file_exists(SKETCH_PATH.$resource->id)){
-			$content =  '<div id="dropZoneFiles" style="width:100%;height:auto;" class="dropzone">Envoyer un fichier</div>';
+		$file =SKETCH_PATH.$resource->id.'.fzz';
+		if(!file_exists($file)){
+			$content =  '<div id="dropZoneFiles" style="width:100%;height:auto;" class="dropzone"> <img src="plugin/fritzing/img/fritzing.png" /><br>Envoyer un fritzing</div>';
 		}else{
-			
-			$file = glob(SKETCH_PATH.$resource->id.'/*.fzz');
 
+			$breadboard = new Fritzing($file);
 			
-			$breadboard = new Fritzing($file[0]);
-			
-			$content =  '<div id="dropZoneFiles" style="width:100%;height:auto;" class="dropzone"><a href="action.php?action=get_resource&id='.$resource->id.'">Télécharger</a></div>';
+			$content =  '<div id="dropZoneFiles" style="width:100%;height:auto;" class="dropzone"></div>';
 			$content .= '<h1>Schéma</h1>'.$breadboard->toHtml();
-			
-			if($breadboard->ino!=null)$content .= '<h1>Code associé</h1><textarea>'.$breadboard->ino.'</textarea>';
-			if($breadboard->comment!=null)$content .= $breadboard->comment;
-			
-			
+		
+			if($breadboard->ino!=null){
+				$content .= '<h1>Code associé</h1><textarea>'.$breadboard->ino.'</textarea>';
+				$response['codemirror'] = array(
+					'mode'=>'text/x-carduino',
+					'theme'=>'monokai',
+					'lineNumbers' => true,
+					'readOnly' =>  true
+				);
+			}
+			$content .= '<h1>Composants</h1><ul class="list-group">';
+			foreach ($breadboard->parts as $part) {
+				if($part['type'] == 'component' && isset($part['component']['name'])){
+					
+					$content .= '<li  class="list-group-item"><strong>'.$part['sigle'].' :</strong> '. $part['component']['name'].' ('. $part['component']['description'].')</li>';
+					
+				}
+			}
+			$content .= '</ul>';
 		}
 		
 
 	
 		$response['content'] = $content;
 
-		$response['codemirror'] = array(
-				'mode'=>'text/x-carduino',
-				'theme'=>'monokai',
-				'lineNumbers' => true,
-				'readOnly' =>  true
-			);
+		
 
 		if($myUser->id == $sketch->owner)
 			$response['upload'] = $infos['upload'];
