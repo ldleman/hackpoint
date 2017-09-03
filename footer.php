@@ -44,6 +44,8 @@
         <script src="js/vendor/mustache.min.js"></script>
         <script src="js/vendor/dropzone.js"></script>
         <script src="js/vendor/codemirror.js"></script>
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <?php echo Plugin::callJs(); ?>
          <?php 
         echo PHP_EOL;
         foreach (glob('js/vendor/codemirror/*.js') as $js) {

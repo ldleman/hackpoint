@@ -6,7 +6,7 @@
 
 
 function fritzing_plugin_add_type(&$types){
-	$types['fritzing'] = __DIR__.SLASH.'Fritzing.class.php';
+	$types['fritzing'] = __DIR__.SLASH.'FritzingType.class.php';
 }
 
 

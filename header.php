@@ -43,6 +43,7 @@ Plugin::addHook("menu_main", function(&$menuItems){
 		<link rel="stylesheet" href="css/codemirror.css">
 		<link rel="stylesheet" href="css/monokai.css">
 		<link rel="stylesheet" href="css/main.css">
+		<?php echo Plugin::callCss("css"); ?>
     </head>
     <body>
         <div id="wrap">
