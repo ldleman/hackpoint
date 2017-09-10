@@ -123,9 +123,14 @@ class Fritzing{
 				$html .= "part.attr('y',".($part['geometry']['y'][0]+$this->minY).");";
 				
 
+				
 				$html .= "part.html('".str_replace(array("'","\n"),array("\'"," "),$part['component']['breadboard'])."');";
 
-				//part.select('g').attr("transform","rotate(45)");
+				if(isset($part['geometry']['r']))
+					$html .= "part.select('g').attr('transform','matrix(".$part['geometry']['r']['m11']." ".$part['geometry']['r']['m12']." ".$part['geometry']['r']['m21']." ".$part['geometry']['r']['m22']." ".$part['geometry']['r']['m31']." ".$part['geometry']['r']['m32'].")');";
+
+
+				
 				 } 
 
 				  foreach ($this->parts as $part) { 
