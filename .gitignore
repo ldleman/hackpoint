@@ -1,4 +1,0 @@
-/upload/*
-!/upload/.htaccess
-/plugin/enabled.json
-/database/.db
